@@ -42,39 +42,37 @@ function set_text(elem, text) {
 }
 
 function shuffle(a) {
-  var len = a.length;
-  var i = len;
-  var p;
-  var t;
+  // http://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle
+  var i, j;
   // When shuffling Cards, try to prevent one direction of a card from
   // immediately following the other direction of the same card. It's more
-  // likely than you think.
-  // TODO Use Fisher-Yates.
-  function less_random() {}
+  // likely than you think. The scheduler tries to avoid scheduling both
+  // directions of the same card on the same day, but it isn't guaranteed.
   function more_random() {
-    while (((i > 0) && a[p].is_reverse(a[i - 1])) ||
-           ((i < (len - 1)) && a[p].is_reverse(a[i + 1])) ||
-           ((p > 0) && a[p - 1].is_reverse(a[i])) ||
-           ((p < (len - 1)) && a[p + 1].is_reverse(a[i])) ||
-           (i === p)) {
-      p = parseInt(Math.random() * len);
+    while (((i > 0) && a[j].is_reverse(a[i - 1])) ||
+           ((i < (a.length - 1)) && a[j].is_reverse(a[i + 1])) ||
+           ((j > 0) && a[j - 1].is_reverse(a[i])) ||
+           ((j < (a.length - 1)) && a[j + 1].is_reverse(a[i])) ||
+           (i === j)) {
+      j = Math.floor(Math.random() * (i + 1));
     }
   }
-  if (len < 4) {
-    more_random = less_random;
+  if (a.length < 4) {
+    more_random = function() {};
   } else {
-    a.forEach(function(e) {
+    a.some(function(e) {
       if (!e.is_reverse) {
-        more_random = less_random;
+        more_random = function() {};
+        return true;
       }
     });
   }
-  while (i--) {
-    p = parseInt(Math.random() * len);
-    t = a[i];
+  for (i = a.length - 1; i > 0; i--) {
+    j = Math.floor(Math.random() * (i + 1));
+    var t = a[i];
     more_random();
-    a[i] = a[p];
-    a[p] = t;
+    a[i] = a[j];
+    a[j] = t;
   }
 }
 
@@ -223,12 +221,16 @@ yaf.db.sync = function() {
     }
     localStorage.journal = JSON.stringify(_journal);
     localStorage.synced = JSON.stringify(_synced);
-    $('sync').children[0].style.stroke = 'grey';
+    var any_journal = false;
+    for (var k in _journal) {
+      any_journal = true;
+    }
+    $('sync').children[0].style.stroke = any_journal ? 'organge' : 'grey';
     if (new_today || any_missed) {
       yaf.study.due.update();
     }
     // If yaf.db.set was called between yaf.db.sync and now, then the timer is
-    // already set. TODO keep $('sync') orange
+    // already set.
     dispatchEvent(new Event(yaf.db.onSync.type));
   };
   xhr.open('POST', '/sync', true);
