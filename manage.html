@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<title>Yet Another Flashcard</title>
+<meta name=viewport content='width=device-width,user-scalable=no,initial-scale=1.0,maximum-scale=1.0'>
+<link rel=stylesheet href=yaf.css>
+<link rel=stylesheet href=manage.css>
+
+<div id=outer>
+
+<div id=error0 class=error>Operation timed out. Please try again.</div>
+<div id=error1 class=error>Item not found.</div>
+<div id=error2 class=error>Only the creator of an item may edit or publish
+  it.</div>
+<div id=error3 class=error>Unpublished items may not be shared.</div>
+<div id=error4 class=error>Published items may not be edited.</div>
+
+<table id=about-help>
+  <td id=about><a href='/about.html'>about</a>
+  <td id=help><a href='https://groups.google.com/d/forum/yet-another-flashcard'>help forum</a>
+  <td id=user>{{user}}
+</table>
+
+{% if any_enabled_decks %}
+<a href='{{settings_url}}' class=button id=settings>study</a>
+{% else %}
+Zero enabled decks. Search
+<a href='https://groups.google.com/d/forum/yet-another-flashcard'>the help forum</a> for decks to add.
+{% endif %}
+
+{% for ref in unpublished %}
+  <div class={{ref.like}}>
+    <span class='part title'>{{ref.title}}</span>
+    <span class=part>created at <span class=datetime>{{ref.uploaded_at}}</span></span>
+    <table class=buttons><tr>
+      <td><a href='{{edit_url}}?id={{ref.id}}' class='edit button'>edit</a>
+      <td><a href='{{publish_url}}?id={{ref.id}}' class='publish button'>publish</a>
+      <td><form method=post action=/remove>
+          <input type=hidden name=CSRFm>
+          <input type=hidden name=id value={{ref.id}}>
+          <input type=submit class='remove button' value=disable>
+        </form>
+    </table>
+  </div>
+{% endfor %}
+
+{% for ref in published %}
+  <div class={{ref.like}}>
+    <span class='part title'>{{ref.title}}</span>
+    <span class=part>created by {{ref.uploaded_by}}</span>
+    <span class=part>at <span class=datetime>{{ref.uploaded_at}}</span></span>
+    <span class=part>added at <span class=datetime>{{ref.added_at}}</span></span>
+    <span class=part>{{ref.users}} {{'user' if ref.users == 1 else 'users'}}</span>
+    <table class=buttons><tr>
+      <td><a href='{{view_url}}/{{ref.title | regex_replace('[^\w-]','_')}}.{{ref.like}}?id={{ref.id}}' class='view button'>view</a>
+      <td><a href='{{share_url}}?id={{ref.id}}' class='share button' id=share-{{ref.id}}>share</a>
+      <td><form method=post action=/remove>
+          <input type=hidden name=CSRFm>
+          <input type=hidden name=id value={{ref.id}}>
+          <input type=submit class='remove button' value=disable>
+        </form>
+    </table>
+    <input id=share-url-{{ref.id}} hidden size=60 class=share-url>
+  </div>
+{% endfor %}
+
+{% for ref in removed %}
+  <div class='removed {{ref.like}}'>
+    <span class='part title'>re-enable <a href='{{share_url}}?id={{ref.id}}'>{{ref.title}}</a></span>
+    <span class=part>created by {{ref.uploaded_by}}</span>
+    <span class=part>at <span class=datetime>{{ref.uploaded_at}}</span></span>
+    <span class=part>{{ref.users}} {{'user' if ref.users == 1 else 'users'}}</span>
+  </div>
+{% endfor %}
+
+<form method=post action=/create>
+<input type=hidden name=CSRFm>
+<table id=create>
+  <td id=create-deck><input type=submit name=deck value='create deck' class=button>
+  <td id=create-plugin><input type=submit name=plugin value='create plugin' class=button>
+</table>
+</form>
+
+<button id=upload>upload decks, plugins</button>
+
+<form method=post action=/upload enctype=multipart/form-data id=upload-form>
+<input type=hidden name=CSRFm>
+<input type=file hidden multiple name=f accept='.csv, .js' id=upload-files id=upload-files>
+</form>
+
+</div>
+<script src='/manage.js'></script>

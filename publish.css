@@ -1,0 +1,41 @@
+input[type=submit] {
+  background: #080;
+}
+#cancel {
+  background: #d00;
+  display: block;
+}
+#title {
+  margin-top: 1em;
+  font-weight: bold;
+}
+#text {
+  white-space: pre-wrap;
+  white-space: -moz-pre-wrap;
+  white-space: -pre-wrap;
+  white-space: -o-pre-wrap;
+  word-wrap: break-word;
+  text-align: left;
+  display: inline-block;
+  max-width: 80em;
+  border: 1px solid black;
+  padding: 0.5em;
+}
+#buttons {
+  width: 100%;
+}
+#buttons td {
+  width: 50%;
+  padding-left: 1em;
+  padding-right: 1em;
+  padding-bottom: 1em;
+}
+#buttons td .button {
+  width: 100%;
+  margin: 0;
+  padding-left: 0.5em;
+  padding-right: 0.5em;
+}
+#outer {
+  display: inline-block;
+}

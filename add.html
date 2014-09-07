@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<title>Add {{like}} {{title}}</title>
+<meta name=viewport content='width=device-width,user-scalable=no,initial-scale=1.0,maximum-scale=1.0'>
+<link rel=stylesheet href=yaf.css>
+<link rel=stylesheet href=add.css>
+<div id=outer>
+<div id=title>{{title}}</div>
+<div>uploaded by {{uploaded_by}}</div>
+<div>at {{uploaded_at}}</div>
+<div>{{users}} {{ 'user' if users == 1 else 'users'}}</div>
+<pre id=text>{{text}}</pre>
+</div>
+<table id=buttons><tr>
+  <td><a href='{{manage_url}}' id=cancel class=button>cancel</a>
+  <td><form method=post action=/add>
+    <input type=hidden name=id value={{id}}>
+    <input type=hidden id=csrf>
+    <input type=submit value='add {{like}}' class=button>
+    </form>
+</table>
+<div id=user>{{username}}</div>
+<script src=add.js></script>

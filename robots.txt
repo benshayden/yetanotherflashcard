@@ -1,0 +1,8 @@
+User-agent: *
+Disallow: /
+Disallow: /manage
+Disallow: /add
+Disallow: /yaf.appcache
+Disallow: /edit
+Disallow: /publish
+Allow: /about.html

@@ -1,0 +1,44 @@
+#title {
+  border: 2px solid gray;
+  padding: 0.3em;
+}
+#save {
+  background: #080;
+  display: block;
+}
+#save:disabled {
+  background: #888;
+}
+#outer {
+  display: inline-block;
+}
+#textwrap {
+  text-align: left;
+}
+#text {
+  margin: auto;
+  display: block;
+}
+#cancel {
+  background: #d00;
+  display: block;
+}
+#buttons {
+  width: 100%;
+  margin-top: 1em;
+}
+#buttons td {
+  width: 50%;
+  padding-left: 0.5em;
+  padding-right: 0.5em;
+  padding-bottom: 1em;
+}
+#buttons td .button {
+  width: 100%;
+  margin: 0;
+}
+#description {
+  margin-top: 1em;
+  text-align: left;
+  max-width: 50em;
+}

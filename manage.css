@@ -1,0 +1,114 @@
+#outer {
+  display: inline-block;
+}
+.error {
+  display: none;
+  color: red;
+}
+#about-help {
+  width: 100%;
+  margin-bottom: 1em;
+}
+#about {
+  text-align: left;
+}
+#help {
+  padding-left: 1em;
+  text-align: center;
+}
+#user {
+  padding-left: 1em;
+  text-align: right;
+}
+#settings {
+  background: #008;
+  margin: 0;
+  display: inline-block;
+  width: 100%;
+}
+.csv, .js {
+  margin-top: 1em;
+  border-radius: 6px;
+}
+.csv {
+  background: #eef;
+}
+.js {
+  background: #fee;
+}
+.part {
+  white-space: nowrap;
+  margin: 0.3em;
+}
+.title {
+  font-weight: bold;
+}
+.buttons {
+  width: 100%;
+}
+.buttons td {
+  width: 33%;
+  padding-left: 0.5em;
+  padding-right: 0.5em;
+}
+.buttons td .button {
+  width: 100%;
+  margin-left: 0;
+  margin-right: 0;
+}
+.edit {
+  display: inline-block;
+  background: #808;
+}
+.publish {
+  display: block;
+  background: #080;
+}
+.remove {
+  background: #d00;
+}
+.view {
+  display: inline-block;
+  background: #000;
+}
+.share {
+  display: inline-block;
+  background: #008;
+}
+.share-url {
+  margin: 0.4em;
+}
+.removed {
+  text-align: left;
+}
+#create {
+  width: 100%;
+  margin-top: 1em;
+}
+#create td {
+  width: 50%;
+}
+#create td input {
+  width: 100%;
+  margin-left: 0;
+  margin-right: 0;
+}
+#create-deck {
+  padding-right: 0.5em;
+}
+#create-plugin {
+  padding-left: 0.5em;
+}
+#create-deck input {
+  background: #447;
+}
+#create-plugin input {
+  background: #844;
+}
+#upload {
+  background: #080;
+  display: inline-block;
+  margin-left: 0;
+  margin-right: 0;
+  width: 100%;
+}

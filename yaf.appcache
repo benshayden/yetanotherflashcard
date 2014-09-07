@@ -1,0 +1,26 @@
+CACHE MANIFEST
+CACHE:
+# {{ user }}
+# {{ version }}
+/yaf.css
+/index.css
+/index.js
+
+{% for plugin in plugins %}
+{{ plugin }}
+{% endfor %}
+
+{% for fp in fingerprints %}
+# {{ fp }}
+{% endfor %}
+
+NETWORK:
+/add
+/create
+/edit
+/manage
+/publish
+/remove
+/sync
+/upload
+/yaf.appcache

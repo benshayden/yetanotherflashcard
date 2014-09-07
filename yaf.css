@@ -1,0 +1,40 @@
+body, div, span, a, img, ol, ul, li, form, label, input, button, table, tbody, tfoot, thead, tr, th, td, canvas, embed, audio, video {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: 100%;
+  font: inherit;
+  vertical-align: baseline;
+}
+body {
+  font-family: Georgia, serif;
+}
+body {
+  max-width: 99999px;
+  max-height: 99999px;
+  text-align: center;
+  margin: 1em;
+}
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+button,
+.button {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  color: white;
+  border-radius: 6px;
+  border: 0;
+  font-weight: bold;
+  height: 2em;
+  line-height: 2em;
+  margin: 0.3em;
+  text-decoration: none;
+  cursor: pointer;
+}
+button:disabled,
+.button:disabled {
+  background: #ddd;
+  color: #444;
+}

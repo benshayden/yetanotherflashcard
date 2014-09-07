@@ -1,0 +1,102 @@
+#deck {
+  font-size: small;
+}
+.title {
+  text-align: center;
+  font-weight: bold;
+}
+.deck {
+  margin-top: 0.5em;
+  line-height: 1.5em;
+}
+#decks {
+  margin-bottom: 1em;
+}
+#install,
+#settings {
+  text-align: left;
+}
+#install,
+#card,
+#settings {
+  display: none;
+}
+#study,
+#study-disabled {
+  width: 100%;
+  background: #080;
+  margin: 0;
+}
+#study-disabled {
+  background: #ddd;
+  color: #444;
+}
+#good {
+  background: #080;
+  padding-left: 1em;
+  padding-right: 1em;
+}
+#done-hint {
+  font-size: small;
+  margin-top: 1em;
+}
+#done-hint-ok {
+  background: #008;
+  padding-left: 0.3em;
+  padding-right: 0.3em;
+}
+#flip {
+  width: 100%;
+  margin-left: 0;
+  margin-right: 0;
+}
+#next {
+  background: #800;
+  padding-left: 1em;
+  padding-right: 1em;
+}
+#install {
+  background: #d60;
+  margin-top: 1em;
+  margin-left: auto;
+  margin-right: auto;
+}
+#flip {
+  background: #080;
+}
+#user-manage-help {
+  width: 100%;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  margin-top: 0.5em;
+}
+#user-manage-help td {
+  width: 33%;
+}
+#manage {
+  padding-left: 1em;
+  padding-right: 1em;
+}
+#manage a {
+  width: 100%;
+  background: #008;
+  display: block;
+  text-align: center;
+  margin: 0;
+}
+#help {
+  text-align: right;
+}
+.option {
+  white-space: nowrap;
+  margin: 0.3em;
+}
+#sync {
+  width: 1em;
+  height: 1em;
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  margin: 0;
+}

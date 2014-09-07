@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<title>Publish {{like}} {{title}}</title>
+<meta name=viewport content='width=device-width,user-scalable=no,initial-scale=1.0,maximum-scale=1.0'>
+<link rel=stylesheet href=yaf.css>
+<link rel=stylesheet href=publish.css>
+
+<div id=outer>
+Unpublished items can be edited but not shared.<br>
+Published items can be shared but not edited.<br>
+Publishing cannot be undone.
+
+<div id=title>{{title}}</div>
+<pre id=text>{{text}}</pre>
+
+<table id=buttons><tr>
+  <td><a href='{{manage_url}}' id=cancel class=button>cancel</a>
+  <td><form method=post action=/publish>
+    <input type=hidden name=id value={{id}}>
+    <input type=hidden id=csrf>
+    <input type=submit value='publish {{like}}' class=button>
+    </form>
+</table>
+<div id=user>{{username}}</div>
+</div>
+
+<script src=publish.js></script>
