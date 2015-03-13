@@ -1,6 +1,0 @@
-{"name": "Yet Another Flashcard",
-"description": "Scriptable flashcards",
-"launch_path": "/",
-"icons": {"128": "/128.png", "64": "/64.png"},
-"developer": {"name": "Ben ∫ Hayden", "url": "https://yetanotherflashcard.appspot.com"},
-"default_locale": "en"}

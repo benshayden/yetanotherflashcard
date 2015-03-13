@@ -1,0 +1,8 @@
+{"short_name":"flashcards",
+ "name": "Yet Another Flashcard",
+ "icons": [{"src":"apple-touch-icon-144x144-precomposed.png",
+            "sizes": "144x144",
+            "type": "image/png"}],
+ "start_url": "/",
+ "display": "fullscreen",
+ "orientation": "portrait"}

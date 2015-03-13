@@ -1,6 +1,6 @@
 var CHOICES = 4;
 var option = 'multiple choice';
-yaf.define_option(PLUGIN_SHORT_ID, option, 'both');
+yaf.define_option(PLUGIN_ID, option, 'both');
 var multichoice = document.createElement('div');
 $('front').parentNode.insertBefore(multichoice, $('front').nextSibling);
 var buttons = [];
@@ -32,8 +32,8 @@ next.style.marginLeft = '0';
 next.style.marginRight = '0';
 next.style.width = '100%';
 next.style.background = '#080';
-yaf.onStudy(function() {
-  if (!yaf.onStudy.card.get_option(PLUGIN_SHORT_ID, option)) {
+addEventListener(yaf.onStudy.type, function() {
+  if (!yaf.onStudy.card.get_option(PLUGIN_ID, option)) {
     multichoice.style.display = 'none';
     return;
   }
@@ -61,7 +61,7 @@ yaf.onStudy(function() {
       set_text(button, wrongs[wrongi].back);
       wrongs.splice(wrongi, 1);
     }
-    button.addEventListener('click', function() {
+    button.onclick = function() {
       buttons[multi_correct].style.border = '3px solid #080';
       if (buttoni === multi_correct) {
         yaf.study.good();
@@ -74,7 +74,7 @@ yaf.onStudy(function() {
       });
       next.style.display = 'block';
       next.focus();
-    });
+    };
   });
 });
 next.addEventListener('click', function() {
