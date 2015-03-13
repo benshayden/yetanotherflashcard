@@ -9,6 +9,9 @@ document.cookie.split(';').forEach(function(a){
   csrf.value = a.substr(i+1).trim();
 });
 $('text').focus();
+$('cancel').addEventListener('click', function() {
+  location.href = '/';
+});
 
 function disableSave() {
   console.debug($('title').value);

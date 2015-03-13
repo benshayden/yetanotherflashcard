@@ -5,6 +5,9 @@ CACHE:
 /yaf.css
 /index.css
 /index.js
+/apple-touch-icon-144x144-precomposed.png
+/favicon.ico
+/manifest.json
 
 {% for plugin in plugins %}
 {{ plugin }}

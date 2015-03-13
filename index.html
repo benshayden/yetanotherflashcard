@@ -1,56 +1,71 @@
-<!DOCTYPE html>
+<!doctype html>
 <html manifest=yaf.appcache>
 <title>Yet Another Flashcard</title>
 <meta name=viewport content='width=device-width,user-scalable=no,initial-scale=1.0,maximum-scale=1.0'>
-<link rel=apple-touch-icon href='apple-touch-icon-144x144-precomposed.png' sizes=144x144>
+<meta name=theme-color content='#ccd'>
+<link rel=apple-touch-icon sizes=144x144 href='apple-touch-icon-144x144-precomposed.png'>
+<link rel=icon sizes="144x144" href='apple-touch-icon-144x144-precomposed.png'>
+<link rel=manifest href=manifest.json>
 <link rel=stylesheet href=yaf.css>
 <link rel=stylesheet href=index.css>
+
+<div id=settings>
+  <div id=study-loading>loading...</div>
+  <button id=study>study</button>
+  <div id=study-done>done for the day</div>
+  <div id=decks>
+    {% for deck in decks %}
+      <div class=head data-id={{deck.id}}>
+        <button class=title>{{deck.title}}</button>
+        <button class=edit data-href="{{deck.edit}}">edit</button>
+      </div>
+      <div class=options data-id={{deck.id}}>
+        <div data-direction=forward>
+          <button>forward</button>
+          <button data-feature=type>type</button>
+          <button data-feature=draw>draw</button>
+          <button data-feature=image>image</button>
+        </div>
+        <div data-direction=backward>
+          <button>backward</button>
+          <button data-feature=type>type</button>
+          <button data-feature=draw>draw</button>
+          <button data-feature=image>image</button>
+        </div>
+        <div class=lessons></div>
+      </div>
+    {% endfor %}
+  </div>
+  <div id=plugins>
+    {% for plugin in plugins %}
+      <button data-href="{{plugin.edit}}">{{plugin.title}}</button>
+    {% endfor %}
+  </div>
+</div>
+
 <div id=card>
-  <span id=deck></span>
-  <div id=front></div>
-  <button id=flip>flip</button>
-  <div id=postflip>
-    <div id=back></div>
-    <button id=good>I knew it!</button>
-    <button id=next>try again later</button>
+  <div id=progress></div>
+  <div id=deck></div>
+  <button id=front></button>
+  <canvas id=draw></canvas>
+  <button id=clear>clear</button>
+  <form id=typeform>
+    <input id=type placeholder=type></input>
+  </form>
+  <div id=back></div>
+  <div id=goodnext>
+    <button id=next>next</button>
+    <button id=good>good</button>
   </div>
   <div id=done-hint>Use your browser's back button to go back to settings.
     <br><button id=done-hint-ok>OK!</button>
   </div>
 </div>
-<div id=settings>
-  <button id=study>study due cards</button>
-  <button id=study-disabled disabled>done studying</button>
-  <table id=user-manage-help>
-    <tr><td>{{user}}
-    <td id=manage><a href=/manage class=button>manage</a>
-    <td id=help><a href='https://groups.google.com/d/forum/yet-another-flashcard' id=forum>help forum</a>
-  </table>
-  <button id=install>install to Firefox</button>
-  <div id=decks></div>
-</div>
-<svg id=sync viewBox="0 0 100 100">
-  <path d="M20,38 A25,25 0 0,1 80,38 l-20,-10 M80,38 l10,-20 M20,62 l-10,20 M20,62 l20,10M20,62 A25,25 0 0,0 80,62" stroke="orange" stroke-linecap="round" stroke-width="12" fill="white"/>
-</svg>
-<div hidden>
-<div id=deck-template class=deck>
-  <div class=title></div>
-  <table>
-    <tr class=forward><td class=option><input type=checkbox class=enable><label class=label>forward<td class=options>
-    <tr class=backward><td class=option><input type=checkbox class=enable><label class=label>backward<td class=options>
-  </table>
-  <div class=lessons-head>Lessons:</div>
-  <div class=lessons></div>
-</div>
-<div id=lesson-template>
-  <input type=checkbox class=enable><label class=label></label>
-</div>
-<span id=option-template class=option><input type=checkbox class=enable><label class=label></label></span>
+
 {% for deck in decks %}
-<div class=csv shortid={{deck.shortid}} longid={{deck.longid}} {{dict(title=deck.title)|xmlattr}}>{{deck.csv}}</div>
+<div class=csv data-id={{deck.id}}>{{deck.csv}}</div>
 {% endfor %}
-</div>
 <script src='/index.js'></script>
 {% for plugin in plugins %}
-<script src='{{plugin}}'></script>
+<script src='{{plugin.src}}'></script>
 {% endfor %}

@@ -1,40 +1,26 @@
-body, div, span, a, img, ol, ul, li, form, label, input, button, table, tbody, tfoot, thead, tr, th, td, canvas, embed, audio, video {
-  margin: 0;
-  padding: 0;
-  border: 0;
-  font-size: 100%;
-  font: inherit;
-  vertical-align: baseline;
+html {
+  font-family: sans;
+  background: #ccd;
+  font-size: 14pt;
+  height: 100%;
 }
 body {
-  font-family: Georgia, serif;
+  margin: auto 0;
+  height: 100%;
+  margin-top: 0;
+  margin-bottom:0;
 }
-body {
-  max-width: 99999px;
-  max-height: 99999px;
-  text-align: center;
-  margin: 1em;
+input, button {
+  font-size: 14pt;
+  padding: 8px;
 }
-table {
-  border-collapse: collapse;
-  border-spacing: 0;
-}
-button,
-.button {
+button {
   -webkit-appearance: none;
   -moz-appearance: none;
-  color: white;
-  border-radius: 6px;
   border: 0;
-  font-weight: bold;
-  height: 2em;
-  line-height: 2em;
-  margin: 0.3em;
-  text-decoration: none;
-  cursor: pointer;
+  background: white;
+  border-radius: 6px;
 }
-button:disabled,
-.button:disabled {
-  background: #ddd;
-  color: #444;
+button:focus {
+  outline: none;
 }

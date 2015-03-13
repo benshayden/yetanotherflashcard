@@ -1,4 +1,4 @@
-1 一二三 15
+1 一 15
 1,一
 2,二
 3,三
@@ -14,7 +14,7 @@ day,日
 month,月
 rice field,田
 eye,目
-2 古吾冒 19
+2 古 19
 old,古
 I perceiver,吾
 risk,冒
@@ -34,7 +34,7 @@ gallbladder,胆
 span,亘
 concave,凹
 convex,凸
-3 旧自白 18
+3 旧 18
 olden times,旧
 oneself,自
 white,白
@@ -48,12 +48,12 @@ round,丸
 measurement,寸
 specialty,専
 Dr.,博
-fortune-telling,占
+fortune telling,占
 above,上
 below,下
 eminent,卓
 morning,朝
-4 只貝貞 18
+4 只 18
 only,只
 shellfish,貝
 upright,貞
@@ -72,7 +72,7 @@ decameron,旬
 ladle,勺
 bull's eye,的
 neck,首
-5 乙乱直 24
+5 乙 24
 fish guts,乙
 riot,乱
 straightaway,直
@@ -97,7 +97,7 @@ street,丁
 village,町
 can,可
 place on the head,頂
-6 子孔了 10
+6 子 10
 child,子
 cavity,孔
 complete,了
@@ -108,7 +108,7 @@ mother,母
 pierce,貫
 elder brother,兄
 overcome,克
-7 小少大 22
+7 小 22
 small,小
 few,少
 large,大
@@ -131,7 +131,7 @@ exquisite,妙
 focus,省
 thick,厚
 strange,奇
-8 川州順 46
+8 川 46
 stream,川
 state,州
 obey,順
@@ -178,7 +178,7 @@ spot,点
 illuminate,照
 fish,魚
 fishing,漁
-9 里黒墨 22
+9 里 22
 ri,里
 black,黒
 black ink,墨
@@ -201,11 +201,11 @@ banquet,宴
 draw near,寄
 wealth,富
 savings,貯
-10 木林森 40
+10 木 40
 tree,木
 grove,林
 forest,森
-Japanese Judas-tree,桂
+Japanese Judas tree,桂
 oak,柏
 frame,枠
 treetops,梢
@@ -216,7 +216,7 @@ plant,植
 wither,枯
 crude,朴
 town,村
-inter-,相
+inter,相
 desk,机
 book,本
 tag,札
@@ -242,7 +242,7 @@ grave,墓
 livelihood,暮
 membrane,膜
 seedling,苗
-11 兆桃眺 15
+11 兆 15
 portent,兆
 peach tree,桃
 stare,眺
@@ -258,7 +258,7 @@ special,特
 revelation,告
 before,先
 wash,洗
-12 介界茶 27
+12 介 27
 jammed in,介
 world,界
 tea,茶
@@ -286,7 +286,7 @@ angling,釣
 needle,針
 inscription,銘
 tranquilize,鎮
-13 道導辻 23
+13 道 23
 roadway,道
 guidance,導
 crossing,辻
@@ -310,7 +310,7 @@ summer,夏
 dispose,処
 twig,条
 fall,落
-14 冗軍輝 24
+14 冗 24
 superfluous,冗
 army,軍
 radiance,輝
@@ -335,7 +335,7 @@ good luck,吉
 robust,壮
 villa,荘
 sell,売
-15 学覚栄 29
+15 学 29
 study,学
 memorize,覚
 flourish,栄
@@ -365,7 +365,7 @@ tune,調
 discuss,談
 consent,諾
 rebuke,諭
-16 式試弐 17
+16 式 17
 style,式
 test,試
 II two,弐
@@ -383,7 +383,7 @@ dwindle,減
 scaffold,桟
 coin,銭
 shallow,浅
-17 止歩渉 26
+17 止 26
 stop,止
 walk,歩
 ford,渉
@@ -410,7 +410,7 @@ prolong,延
 nativity,誕
 cornerstone,礎
 bridegroom,婿
-18 衣裁装 35
+18.0 衣 35
 garment,衣
 tailor,裁
 attire,装
@@ -446,7 +446,7 @@ winter,冬
 heavens,天
 bridge,橋
 attractive,嬌
-18.1 立泣章 45
+18.1 立 45
 stand up,立
 cry,泣
 badge,章
@@ -492,7 +492,7 @@ briar,茨
 assets,資
 figure,姿
 consult with,諮
-19 賠培剖 33
+19 賠 33
 compensation,賠
 cultivate,培
 divide,剖
@@ -526,14 +526,14 @@ ridgepole,棟
 frozen,凍
 pregnancy,妊
 courts,廷
-20 染燃賓 6
+20 染 6
 dye,染
 burn,燃
 V.I.P.,賓
-year-end,歳
+year end,歳
 prefecture,県
 horse chestnut,栃
-21 地池虫 32
+21.0 地 32
 ground,地
 pond,池
 insect,虫
@@ -566,7 +566,7 @@ overpowering,豪
 intestines,腸
 location,場
 hot water,湯
-21.1 羊美洋 31
+21.1 羊 31
 sheep,羊
 beauty,美
 ocean,洋
@@ -580,11 +580,11 @@ solely,唯
 char,焦
 reef,礁
 gather,集
-quasi-,准
+quasi,准
 advance,進
 miscellaneous,雑
 female,雌
-semi-,準
+semi,準
 stirred up,奮
 rob,奪
 assurance,確
@@ -598,7 +598,7 @@ learn,習
 the following,翌
 weekday,曜
 laundry,濯
-22 曰困固 17
+22.0 曰 17
 sayeth,曰
 quandary,困
 harden,固
@@ -607,7 +607,7 @@ group,団
 cause,因
 matrimony,姻
 park,園
--times,回
+times,回
 podium,壇
 store,店
 warehouse,庫
@@ -616,7 +616,7 @@ government office,庁
 bed,床
 hemp,麻
 grind,磨
-22.1 心忘忍 42
+22.1 心 42
 heart,心
 forget,忘
 endure,忍
@@ -659,7 +659,7 @@ pining,慕
 annexed,添
 invariably,必
 ooze,泌
-23 手看摩 44
+23.0 手 44
 hand,手
 watch over,看
 chafe,摩
@@ -704,7 +704,7 @@ contraption,械
 nose,鼻
 punish,刑
 mould,型
-23.1 才財材 46
+23.1 才 46
 genius,才
 property,財
 lumber,材
@@ -746,12 +746,12 @@ uncle,叔
 coach,督
 loneliness,寂
 graceful,淑
-anti-,反
+anti,反
 slope,坂
 plank,板
 return,返
 marketing,販
-23.2 爪妥乳 40
+23.2 爪 40
 claw,爪
 gentle,妥
 milk,乳
@@ -792,7 +792,7 @@ sulfur,硫
 current,流
 license,允
 tempt,唆
-24 出山拙 29
+24 出 29
 exit,出
 mountain,山
 bungling,拙
@@ -822,7 +822,7 @@ longing,欲
 abundant,裕
 plumbum,鉛
 run alongside,沿
-25 賞党堂 42
+25.0 賞 42
 prize,賞
 party,党
 hall,堂
@@ -865,7 +865,7 @@ rather,寧
 voiced,濁
 ring,環
 send back,還
-25.1 夫扶渓 54
+25.1 夫 54
 husband,夫
 aid,扶
 mountain stream,渓
@@ -920,7 +920,7 @@ penal,懲
 delicate,微
 boulevard,街
 equilibrium,衡
-26 稿稼程 59
+26.0 稿 27
 draft,稿
 earnings,稼
 extent,程
@@ -948,6 +948,7 @@ transparent,透
 entice,誘
 cereals,穀
 germ,菌
+26.1 米 32
 rice,米
 flour,粉
 sticky,粘
@@ -980,13 +981,13 @@ solution,答
 scheme,策
 register,簿
 fabricate,築
-27 人佐但 76
+27.0 人 19
 person,人
 assistant,佐
 however,但
 dwell,住
 rank,位
-go-between,仲
+go between,仲
 body,体
 remote,悠
 affair,件
@@ -1000,6 +1001,7 @@ provisional,仮
 chief,伯
 vulgar,俗
 faith,信
+27.1 佳 19
 excellent,佳
 reliant,依
 example,例
@@ -1019,6 +1021,7 @@ reparation,償
 hermit,仙
 sponsor,催
 humanity,仁
+27.2 侮 19
 scorn,侮
 use,使
 convenience,便
@@ -1038,6 +1041,7 @@ fare,賃
 substitute,代
 sack,袋
 lend,貸
+27.3 化 19
 change,化
 flower,花
 freight,貨
@@ -1057,7 +1061,7 @@ rot,腐
 sit,座
 graduate,卒
 umbrella,傘
-28 匁以似 18
+28 匁 18
 monme,匁
 by means of,以
 similar,似
@@ -1076,7 +1080,7 @@ abuse,弊
 yell,喚
 interchange,換
 dissolve,融
-29 施旋遊 41
+29.0 施 20
 alms,施
 rotation,旋
 play,遊
@@ -1097,6 +1101,7 @@ dig,掘
 ditch,堀
 reside,居
 set,据
+29.1 層 21
 stratum,層
 bureau,局
 slow,遅
@@ -1118,7 +1123,7 @@ tears,涙
 employ,雇
 look back,顧
 disclose,啓
-30 示礼祥 39
+30 示 39
 show,示
 salutation,礼
 auspicious,祥
@@ -1142,7 +1147,7 @@ wherefore,由
 pluck,抽
 oil,油
 sleeve,袖
-mid-air,宙
+midair,宙
 deliver,届
 flute,笛
 axis,軸
@@ -1158,7 +1163,7 @@ fruit,果
 confectionary,菓
 chapter,課
 naked,裸
-31 斤析所 59
+31.0 斤 18
 ax,斤
 chop,析
 place,所
@@ -1177,6 +1182,7 @@ accusation,訴
 yesterday,昨
 lie,詐
 make,作
+31.1 雪 18
 snow,雪
 record,録
 inquire,尋
@@ -1195,6 +1201,7 @@ T'ang,唐
 sugar,糖
 sane,康
 apprehend,逮
+31.2 伊 23
 Italy,伊
 old boy,君
 flock,群
@@ -1218,7 +1225,7 @@ map,図
 utilize,用
 comfortable,庸
 equip,備
-32 昔錯借 36
+32 昔 36
 once upon a time,昔
 confused,錯
 borrow,借
@@ -1246,8 +1253,8 @@ scroll,巻
 sphere,圏
 victory,勝
 wisteria,藤
-facsimilie,謄
-one-sided,片
+facsimile,謄
+one sided,片
 printing block,版
 of,之
 destitution,乏
@@ -1255,7 +1262,7 @@ turf,芝
 negative,不
 negate,否
 cupfuls,杯
-33 矢矯族 28
+33 矢 28
 dart,矢
 rectify,矯
 tribe,族
@@ -1284,7 +1291,7 @@ boast,誇
 dirty,汚
 bestow,与
 copy,写
-34 身射謝 46
+34 身 46
 somebody,身
 shoot,射
 apologize,謝
@@ -1318,7 +1325,7 @@ contrast,較
 exam,校
 leg,足
 stimulate,促
-long-distance,距
+long distance,距
 path,路
 dew,露
 hop,跳
@@ -1331,8 +1338,8 @@ marrow,髄
 calamity,禍
 whirlpool,渦
 overdo,過
-35 阪阿際 39
-Heights,阪
+35.0 阪 22
+heights,阪
 Africa,阿
 occasion,際
 hinder,障
@@ -1354,6 +1361,7 @@ isolate,隔
 conceal,隠
 degenerate,堕
 collapse,陥
+35.1 穴 17
 hole,穴
 empty,空
 withdraw,控
@@ -1368,10 +1376,10 @@ hard up,窮
 grope,探
 deep,深
 hill,丘
-Point,岳
+point,岳
 soldier,兵
 seacoast,浜
-36 糸織繕 62
+36.0 糸 31
 thread,糸
 weave,織
 darning,繕
@@ -1403,6 +1411,7 @@ sutra,経
 sire,紳
 promise,約
 dainty,細
+36.1 累 31
 accumulate,累
 cord,索
 general,総
@@ -1434,7 +1443,7 @@ lineage,系
 person in charge,係
 grandchild,孫
 suspend,懸
-37 却脚卸 32
+37 却 32
 instead,却
 shins,脚
 wholesale,卸
@@ -1467,7 +1476,7 @@ detain,留
 trade,貿
 stamp,印
 entertain,興
-38 酉酒酌 57
+38 酉 28
 sign of the bird,酉
 sake,酒
 bartending,酌
@@ -1487,7 +1496,7 @@ short,短
 bountiful,豊
 drum,鼓
 rejoice,喜
-timber-trees,樹
+timber trees,樹
 dish,皿
 blood,血
 basin,盆
@@ -1496,6 +1505,7 @@ steal,盗
 warm,温
 oversee,監
 overflow,濫
+38.1 鑑 29
 specimen,鑑
 fierce,猛
 boom,盛
@@ -1519,16 +1529,16 @@ drink,飲
 hungry,飢
 starve,餓
 decorate,飾
-Bldg.,館
+bldg,館
 foster,養
 sated,飽
 previously,既
 outline,概
 rue,慨
-39 平呼坪 47
+39 平 47
 even,平
 call,呼
-two-mat area,坪
+two mat area,坪
 evaluate,評
 reap,刈
 hope,希
@@ -1564,7 +1574,7 @@ mausoleum,陵
 sign of the hog,亥
 nucleus,核
 engrave,刻
-above-stated,該
+above stated,該
 censure,劾
 mention,述
 art,術
@@ -1573,7 +1583,7 @@ brew,醸
 defer,譲
 lot,壌
 lass,嬢
-40 毒素麦 56
+40 毒 56
 poison,毒
 elementary,素
 barley,麦
@@ -1621,7 +1631,7 @@ stipend,俸
 rod,棒
 discreet,謹
 diligence,勤
-Sino-,漢
+sino,漢
 sigh,嘆
 difficult,難
 splendor,華
@@ -1630,7 +1640,7 @@ drowsy,睡
 spindle,錘
 ride,乗
 surplus,剰
-41 今含吟 29
+41 今 29
 now,今
 include,含
 versify,吟
@@ -1644,7 +1654,7 @@ plains,野
 concurrently,兼
 dislike,嫌
 sickle,鎌
-self-effacing,謙
+self effacing,謙
 bargain,廉
 west,西
 value,価
@@ -1660,7 +1670,7 @@ smoke,煙
 south,南
 camphor tree,楠
 offering,献
-42 門問閲 32
+42 門 32
 gates,門
 question,問
 review,閲
@@ -1677,7 +1687,7 @@ column,欄
 fight,闘
 godown,倉
 genesis,創
-un-,非
+un,非
 haiku,俳
 repudiate,排
 sad,悲
@@ -1692,8 +1702,8 @@ admirable,偉
 difference,違
 horizontal,緯
 defense,衛
-Korea,韓
-43 干肝刊 34
+korea,韓
+43 干 34
 dry,干
 liver,肝
 publish,刊
@@ -1728,7 +1738,7 @@ work,働
 species,種
 collide,衝
 fragrant,薫
-44 病痴痘 28
+44 病 28
 ill,病
 stupid,痴
 pox,痘
@@ -1757,7 +1767,7 @@ abolish,廃
 colleague,僚
 dormitory,寮
 heal,療
-45 彫形影 47
+45 彫 47
 carve,彫
 shape,形
 shadow,影
@@ -1774,7 +1784,7 @@ discipline,修
 rare,珍
 checkup,診
 sentence,文
-vis-a-vis,対
+versus,対
 family crest,紋
 mosquito,蚊
 adjusted,斉
@@ -1805,10 +1815,10 @@ color,色
 discontinue,絶
 glossy,艶
 fertilizer,肥
-46 甘紺某 19
+46 甘 19
 sweet,甘
 navy blue,紺
-so-and-so,某
+so and so,某
 conspire,謀
 mediator,媒
 deceit,欺
@@ -1825,7 +1835,7 @@ bequeath,遺
 dispatch,遣
 dance,舞
 nothingness,無
-47 組粗租 30
+47 組 30
 association,組
 coarse,粗
 tariff,租
@@ -1856,7 +1866,7 @@ bomb,爆
 respect,恭
 elect,選
 Mr.,殿
-48 井囲耕 22
+48 井 22
 well,井
 surround,囲
 till,耕
@@ -1879,7 +1889,7 @@ everywhere,遍
 compilation,編
 tome,冊
 code,典
-49 氏紙婚 25
+49 氏 25
 family name,氏
 paper,紙
 marriage,婚
@@ -1905,7 +1915,7 @@ hometown,郷
 echo,響
 son,郎
 corridor,廊
-50 盾循派 27
+50 盾 27
 shield,盾
 sequential,循
 faction,派
@@ -1933,7 +1943,7 @@ rowboat,艇
 melon,瓜
 arc,弧
 orphan,孤
-51 繭益暇 24
+51 繭 24
 cocoon,繭
 benefit,益
 spare time,暇
@@ -1958,7 +1968,7 @@ steam,蒸
 acquiesce,承
 bin,函
 poles,極
-52 牙芽邪 23
+52 牙 23
 tusk,牙
 bud,芽
 wicked,邪
@@ -1982,11 +1992,11 @@ dilate,脹
 hair of the head,髪
 unfold,展
 miss,喪
-53 巣単戦 51
+53 巣 51
 nest,巣
 simple,単
 war,戦
-Zen,禅
+zen,禅
 bullet,弾
 cherry tree,桜
 animal,獣
@@ -2017,14 +2027,14 @@ foolish,愚
 corner,隅
 inverted,逆
 model,塑
-Mount,岡
+mount,岡
 steel,鋼
 hawser,綱
 sturdy,剛
 tin can,缶
 pottery,陶
 swing,揺
-Noh chanting,謡
+noh chanting,謡
 concerning,就
 sociable,懇
 groundbreaking,墾
@@ -2034,7 +2044,7 @@ nightfall,晩
 exertion,勉
 elephant,象
 statue,像
-54 馬駒験 28
+54 馬 28
 horse,馬
 pony,駒
 verification,験
@@ -2063,7 +2073,7 @@ lovely,麗
 bear,熊
 ability,能
 attitude,態
-55 寅演辰 20
+55 寅 20
 sign of the tiger,寅
 performance,演
 sign of the dragon,辰
@@ -2084,7 +2094,7 @@ witch,魔
 fascination,魅
 clod,塊
 attack,襲
-56 嚇朕雰 17
+56 嚇 17
 upbraid,嚇
 majestic plural,朕
 atmosphere,雰
@@ -2102,3 +2112,19 @@ lagoon,潟
 sign of the cow,丑
 sign of the hare,卯
 sign of the snake,巳
+RTK 3: 1 此
+this here,此
+brushwood,柴
+fort,砦
+whit,些
+beard,髭
+crystal,璃
+fowl,禽
+apple,檎
+sympathize with,憐
+phosphorus,燐
+camelopard,麟
+scaled,鱗
+encompassing,奄
+hermitage,庵
+shrouded,掩

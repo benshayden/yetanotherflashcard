@@ -13,7 +13,7 @@ import re
 import time
 import webapp2
 
-EPOCH = 1394052923
+EPOCH = 1389254400
 
 JINJA = jinja2.Environment(
   loader=jinja2.FileSystemLoader(os.path.dirname(__file__)),
@@ -36,8 +36,12 @@ PROD = not os.environ.get('SERVER_SOFTWARE', '').startswith('Dev')
 # domains.
 DEFAULT_HOST = get_default_version_hostname()
 INSECURE_ORIGIN = 'http://' + DEFAULT_HOST
-SECURE_HOST = 's-dot-' + DEFAULT_HOST if PROD else DEFAULT_HOST
-SECURE_ORIGIN = 'https://' + SECURE_HOST if PROD else INSECURE_ORIGIN
+if PROD:
+  SECURE_HOST = 's-dot-' + DEFAULT_HOST
+  SECURE_ORIGIN = 'https://' + SECURE_HOST
+else:
+  SECURE_HOST = DEFAULT_HOST
+  SECURE_ORIGIN = INSECURE_ORIGIN
 
 handlers = []
 def handler(path_re, path=None):
@@ -77,9 +81,14 @@ def handler(path_re, path=None):
       self.abortif((not shared.published) and
           (users.get_current_user().nickname() != shared.uploaded_by),
           Manage.SECURE_URL + '#e=3', info=('_unpublished',))
-    def _csrf(self, redirect, param, expires, field=''):
-      self.abortif(not CSRF.verify(self, param, expires, field), redirect, ('_csrf',))
+    def _csrf(self, redirect, param, field='', timeout=0):
+      self.abortif(not CSRF.verify(self, param, field=field, timeout=timeout),
+                   redirect, ('_csrf',))
   return Base
+
+def strip_port(hostname):
+  if ':' in hostname: return hostname[:hostname.index(':')]
+  return hostname
 
 def as_unicode(s):
   if isinstance(s, str): return unicode(s, 'utf-8')
@@ -129,10 +138,9 @@ def set_cookie(handler, name, value, now=0, expires=0, domain='%', path='%', sec
     if not now: now = time.time()
     s+= '; Expires=' + time.strftime('%a, %d-%b-%Y %T GMT',
       time.gmtime(now + expires))
-  if domain and PROD:
+  if domain:
     if domain == '%': domain = handler.request.headers.get('Host', '')
-    if domain and ':' in domain: domain = domain[:domain.index(':')]
-    if domain: s+= '; Domain=.' + domain
+    if domain: s+= '; Domain=.' + strip_port(domain)
   if path:
     if path == '%': path = handler.request.path
     s+= '; Path=' + path
@@ -170,9 +178,9 @@ class CSRF(db.Model):
     set_cookie(handler, CSRF.COOKIE + param, token, **kw)
 
   @staticmethod
-  def verify(handler, param, expires, field=''):
+  def verify(handler, param='', field='', timeout=0):
     assert param
-    assert expires
+    assert timeout
     assert CSRF.DELIM not in param
     if not field: field = handler.request.get(CSRF.COOKIE + param)
     cookie = handler.request.cookies.get(CSRF.COOKIE + param)
@@ -182,16 +190,27 @@ class CSRF(db.Model):
     now = int(time.time())
     hmac, issue_time = field.split(CSRF.DELIM)
     expected = CSRF.hmac([users.get_current_user().user_id(), param, issue_time])
-    if (hmac != expected) or (not issue_time.isdigit()) or (now > int(issue_time) + expires):
+    if (hmac != expected) or (not issue_time.isdigit()) or (now > int(issue_time) + timeout):
       logging.error('hmac=%r expected=%r issue_time=%r', hmac, expected, issue_time)
       return False
     return True
 
 class ShortPair(db.Model):
-  # TODO use a single json TextProperty per user to save expensive writes?
+  t = db.IntegerProperty()
   k = db.StringProperty()
   v = db.StringProperty(indexed=False)
-  t = db.IntegerProperty()
+
+  @staticmethod
+  def update(t, k, v):
+    if k == 't' or k == 'c': return
+    i = ShortPair.all().ancestor(parent()).filter('k', k).get()
+    if i:
+      i.t = t
+      i.v = v
+    else:
+      i = ShortPair(parent=parent(), t=t, k=k, v=v)
+    i.put()
+    return i
 
 def fingerprint(s):
   if isinstance(s, unicode): s = s.encode('utf-8')
@@ -244,7 +263,6 @@ class LongReference(db.Model):
   shared = db.ReferenceProperty(LongShared, required=True)
   removed = db.BooleanProperty(default=False)
   added_at = db.DateTimeProperty(auto_now_add=True)
-  shortid = db.IntegerProperty()
 
   def shared_id(self): return self.shared.key().id()
 
@@ -268,19 +286,6 @@ class LongReference(db.Model):
     plugins.sort(key=lambda ref: ref.shared_id())
     return decks, plugins, removed_decks, removed_plugins
 
-class ShortIDCounter(db.Model):
-  counter = db.IntegerProperty()
-
-  @staticmethod
-  def next():
-    ctr = ShortIDCounter.all().ancestor(parent()).get()
-    if ctr:
-      ctr.counter += 1
-    else:
-      ctr = ShortIDCounter(parent=parent(), counter=0)
-    ctr.put()
-    return ctr.counter
-
 class CSPViolationReport(db.Model):
   doc = db.StringProperty()
   ref = db.StringProperty()
@@ -295,32 +300,30 @@ class ReportCSPViolation(handler('/reportcspviolation')):
     if report and 'csp-report' in report: report = report['csp-report']
     self.abortif(not report, 400)
     prev = CSPViolationReport.all().filter(
-      'doc', report.get('document-uri', '')).filter(
-      'ref', report.get('referrer', '')).filter(
-      'blocked', report.get('blocked-uri', '')).filter(
-      'directive', report.get('violated-directive', '')).filter(
-      'policy', report.get('original-policy', '')).get()
+      'doc', report['document-uri']).filter(
+      'ref', report['referrer']).filter(
+      'blocked', report['blocked-uri']).filter(
+      'directive', report['violated-directive']).filter(
+      'policy', report['original-policy']).get()
     if prev:
       prev.count += 1
     else:
       prev = CSPViolationReport(
-        doc=report.get('document-uri', ''),
-        ref=report.get('referrer', ''),
-        blocked=report.get('blocked-uri', ''),
-        directive=report.get('violated-directive', ''),
-        policy=report.get('original-policy', ''),
+        doc=report['document-uri'],
+        ref=report['referrer'],
+        blocked=report['blocked-uri'],
+        directive=report['violated-directive'],
+        policy=report['original-policy'],
         count=1)
     prev.put()
-    logging.debug('reportcspviolation doc=%r ref=%r blocked=%r directive=%r policy=%r count=%r',
-                  prev.doc, prev.ref, prev.blocked, prev.directive, prev.policy, prev.count)
 
 class Index(handler('/')):
   CSP = ("script-src 'self'; " +
          "style-src 'self'; " +
-         "img-src *; " +
-         "media-src *; " +
+         "img-src http://*/* https://*/*; " +
+         "media-src http://*/* https://*/*; " +
          "frame-src 'none'; " +
-         "connect-src *; " +
+         "connect-src http://*/* https://*/*; " +
          "font-src 'none'; " +
          "report-uri " + ReportCSPViolation.PATH)
   URL = 'https://' + DEFAULT_HOST if PROD else INSECURE_ORIGIN
@@ -335,15 +338,15 @@ class Index(handler('/')):
     self.response.headers.add_header('X-Content-Security-Policy', Index.CSP)
     if PROD:
       self.response.headers.add_header('Strict-Transport-Security', 'max-age=31536000')
-    CSRF.sign(self, Sync.CSRF_PARAM, expires=Sync.CSRF_EXPIRES, path='/')
+    CSRF.sign(self, Sync.CSRF_PARAM, expires=Sync.CSRF_EXPIRES, path=False)
     self.response.out.write(JINJA.get_template('index.html').render(dict(
-      user=users.get_current_user().nickname(),
-      manage_url=Manage.SECURE_URL,
-      plugins=[Text.PATH + '?id=' + str(plugin.shared_id())
+      plugins=[dict(src=(Text.PATH + '?id=' + str(plugin.shared_id())),
+                    title=plugin.shared.title,
+                    edit=(Edit.SECURE_URL + '?id=' + str(plugin.shared_id())))
                for plugin in plugins],
-      decks=[dict(shortid=deck.shortid,
-                  longid=deck.shared_id(),
+      decks=[dict(id=deck.shared_id(),
                   title=deck.shared.title,
+                  edit=(Edit.SECURE_URL + '?id=' + str(deck.shared_id())),
                   csv=deck.shared.text)
              for deck in decks])))
 
@@ -356,7 +359,7 @@ class AppCache(handler('/yaf.appcache')):
     # Index, which will redirect to Manage if not decks.
     self.abortif(not decks, 404)
 
-    CSRF.sign(self, Sync.CSRF_PARAM, expires=Sync.CSRF_EXPIRES, path='/')
+    CSRF.sign(self, Sync.CSRF_PARAM, expires=Sync.CSRF_EXPIRES, path=False)
     self.response.headers['Content-Type'] = 'text/cache-manifest'
     self.response.out.write(JINJA.get_template('yaf.appcache').render(dict(
       user=users.get_current_user().user_id(),
@@ -375,41 +378,22 @@ class Sync(handler('/sync')):
       self.response.set_status(204)
       return
     sent = json.loads(self.request.body)
-    self._csrf(403, Sync.CSRF_PARAM, Sync.CSRF_EXPIRES, sent.pop('\0', ''))
+    self._csrf(403, Sync.CSRF_PARAM, sent.get('c', ''), Sync.CSRF_EXPIRES)
 
-    CSRF.sign(self, Sync.CSRF_PARAM, expires=Sync.CSRF_EXPIRES)
-    missed = dict()
-    for kvt in ShortPair.all().ancestor(parent()).filter(
-        't >', int(self.request.headers.get('x-last-sync', 0))):
-      if not kvt.k in sent:
-        missed[kvt.k] = dict(v=kvt.v, t=kvt.t)
-      # if kvt.k in sent, let it be handled in the next loop
-    for k, sent_vt in sent.iteritems():
-      sent_t = int(sent_vt['t'])
-      i = ShortPair.all().ancestor(parent()).filter('k', k).get()
-      if not i:
-        i = ShortPair(parent=parent(), k=k, v=sent_vt['v'], t=sent_t)
-        i.put()
-      elif i.t < sent_t:
-        i.t = sent_t
-        i.v = sent_vt['v']
-        i.put()
-      else:
-        missed[k] = dict(v=i.v, t=i.t)
-    self.response.headers['x-sync-time'] = str(int(time.time() - EPOCH))
+    del sent['c']
+    t = sent['t']
+    del sent['t']
+    CSRF.sign(self, Sync.CSRF_PARAM, expires=Sync.CSRF_EXPIRES, path=False)
+    now = int(time.time() - EPOCH)
+    missed = dict(t=now)
+    for i in ShortPair.all().ancestor(parent()).filter('t >', t):
+      # don't filter sent out of missed so that the client can merge changes
+      if i.k == 't': continue
+      missed[i.k] = i.v
+    # TODO should all these updates be in a single txn?
+    for k, v in sent.iteritems():
+      ShortPair.update(now, k, str(v))
     self.response.out.write(json.dumps(missed))
-
-def mergeKVTs(stored, sent, last_sync):
-  missed = {}
-  for k in stored:
-    if stored[k]['t'] > last_sync and not k in sent:
-      missed[k] = stored[k]
-  for k in sent:
-    if k not in stored or sent[k]['t'] > stored[k]['t']:
-      stored[k] = sent[k]
-    else:
-      missed[k] = stored[k]
-  return stored, missed
 
 class Manage(handler('/manage')):
   CSP = ("script-src 'self'; " +
@@ -417,7 +401,7 @@ class Manage(handler('/manage')):
          "img-src 'self'; " +
          "media-src 'self'; " +
          "frame-src 'none'; " +
-         "connect-src 'self'; " +
+         "connect-src 'none'; " +
          "font-src 'none'; " +
          "frame-options 'deny'; " +
          "report-uri " + ReportCSPViolation.PATH)
@@ -434,7 +418,7 @@ class Manage(handler('/manage')):
     if PROD:
       self.response.headers.add_header('Strict-Transport-Security', 'max-age=31536000')
     user = users.get_current_user()
-    CSRF.sign(self, Manage.CSRF_PARAM, expires=Manage.CSRF_EXPIRES, secure=True, path='/')
+    CSRF.sign(self, Manage.CSRF_PARAM, expires=Manage.CSRF_EXPIRES, secure=True, path=False)
     decks, plugins, removed_decks, removed_plugins = LongReference.for_user()
     # unpublished decks alphabetized by title
     # unpublished plugins alphabetized by title
@@ -473,7 +457,7 @@ class Upload(handler('/upload')):
   def post(self):
     self._user(users.create_login_url(Manage.SECURE_URL))
     self._origin(SECURE_ORIGIN, Manage.PATH)
-    self._csrf(Manage.SECURE_URL + '#e=0', Manage.CSRF_PARAM, Manage.CSRF_EXPIRES)
+    self._csrf(Manage.SECURE_URL + '#e=0', Manage.CSRF_PARAM, timeout=Manage.CSRF_EXPIRES)
 
     for f in parse_files(self.request.body):
       shared = LongShared.get_or_create(f)
@@ -482,8 +466,7 @@ class Upload(handler('/upload')):
         continue
       ref = LongReference.all().ancestor(parent()).filter('shared', shared).get()
       if not ref:
-        ref = LongReference(shared=shared, parent=parent(),
-                            shortid=ShortIDCounter.next())
+        ref = LongReference(shared=shared, parent=parent())
       ref.put()
     self.redirect(Manage.SECURE_URL)
 
@@ -491,7 +474,7 @@ class Remove(handler('/remove')):
   def post(self):
     self._user(users.create_login_url(Manage.SECURE_URL))
     self._origin(SECURE_ORIGIN, Manage.PATH)
-    self._csrf(Manage.SECURE_URL + '#e=0', Manage.CSRF_PARAM, Manage.CSRF_EXPIRES)
+    self._csrf(Manage.SECURE_URL + '#e=0', Manage.CSRF_PARAM, timeout=Manage.CSRF_EXPIRES)
     shared_id = self.request.get('id')
     shared = None
     ref = None
@@ -553,12 +536,11 @@ class Add(handler('/add')):
       shared = LongShared.get_by_id(int(shared_id))
     self.abortif(not shared, Manage.SECURE_URL + '#e=1')
     self._unpublished(shared)
-    self._csrf(Manage.SECURE_URL + '#e=0', Add.CSRF_PARAM + shared_id, Add.CSRF_EXPIRES)
+    self._csrf(Manage.SECURE_URL + '#e=0', Add.CSRF_PARAM + shared_id, timeout=Add.CSRF_EXPIRES)
 
     ref = LongReference.all().ancestor(parent()).filter('shared', shared).get()
     if not ref:
-      ref = LongReference(parent=parent(), shared=shared,
-                          shortid=ShortIDCounter.next())
+      ref = LongReference(parent=parent(), shared=shared)
     ref.removed = False
     ref.put()
     logging.info('successful add %s', shared_id)
@@ -575,19 +557,10 @@ class Text(handler(r'/text.*', '/text')):
   # it for a <script> tag (perhaps created by a mischievous plugin), Index.CSP
   # will prevent it from running.
 
-  # Prevent plugins from accidentally leaking globals, and catch all exceptions.
-  PLUGIN_FORMAT = (
-    '"use strict";\n' +
-    '// %s\n' +
-    'try{\n(function(PLUGIN_SHORT_ID, PLUGIN_LONG_ID){\n' +
-    '%s\n})' +
-    '(%d,%d)\n}catch(plugin_error){console.error(plugin_error)}')
-  # TODO report error to server
-
   def get(self):
     # TODO serve multiple plugins at once?
     shared_id = self.request.get('id')
-    shared = ref = None
+    shared = None
     if shared_id and shared_id.isdigit():
       shared = LongShared.get_by_id(int(shared_id))
     self.abortif(not shared, 404, ('id=%s', shared_id))
@@ -601,14 +574,8 @@ class Text(handler(r'/text.*', '/text')):
     text = shared.text
     if (shared.like == LongShared.JS) and (
         (not PROD) or (self.request.host == DEFAULT_HOST)):
-      if users.get_current_user() and not ref:
-        ref = LongReference.all().ancestor(parent()).filter('shared', shared).get()
-      longid = shared.key().id()
-      text = Text.PLUGIN_FORMAT % (
-          shared.title.replace('\n', '').replace('\r', ''),
-          text,
-          (ref.shortid if ref else longid), longid)
-
+      # Prevent plugins from accidentally leaking globals
+      text = '"use strict";\n(function(PLUGIN_ID){\n' + text + '\n})(' + str(shared.key().id()) + ');\n'
     self.response.headers['Content-Type'] = shared.mime()
     self.response.headers.add_header('Content-Disposition', 'inline')
     self.response.out.write(text)
@@ -653,7 +620,8 @@ class Publish(handler('/publish')):
     if shared_id and shared_id.isdigit():
       shared = LongShared.get_by_id(int(shared_id))
     self._uploaded(shared)
-    self._csrf(Manage.SECURE_URL + '#e=0', Publish.CSRF_PARAM + shared_id, Publish.CSRF_EXPIRES)
+    self._csrf(Manage.SECURE_URL + '#e=0', Publish.CSRF_PARAM + shared_id,
+               timeout=Publish.CSRF_EXPIRES)
 
     shared.published = True
     shared.put()
@@ -667,7 +635,7 @@ class Edit(handler('/edit')):
          "img-src 'self'; " +
          "media-src 'self'; " +
          "frame-src 'none'; " +
-         "connect-src 'self'; " +
+         "connect-src 'none'; " +
          "font-src 'none'; " +
          "frame-options 'deny'; " +
          "report-uri " + ReportCSPViolation.PATH)
@@ -721,7 +689,7 @@ class Edit(handler('/edit')):
     if shared:
       ref = LongReference.all().ancestor(parent()).filter('shared', shared).get()
     self.abortif(not ref, Manage.SECURE_URL + '#e=1', ('missing %s', shared_id))
-    self._csrf(Manage.SECURE_URL + '#e=0', Edit.CSRF_PARAM + shared_id, Edit.CSRF_EXPIRES)
+    self._csrf(Manage.SECURE_URL + '#e=0', Edit.CSRF_PARAM + shared_id, timeout=Edit.CSRF_EXPIRES)
     self._uploaded(shared)
     self._published(shared)
 
@@ -735,7 +703,7 @@ class Create(handler('/create')):
   def post(self):
     self._user(users.create_login_url(Manage.SECURE_URL))
     self._origin(SECURE_ORIGIN, Manage.PATH)
-    self._csrf(Manage.SECURE_URL + '#e=0', Manage.CSRF_PARAM, Manage.CSRF_EXPIRES)
+    self._csrf(Manage.SECURE_URL + '#e=0', Manage.CSRF_PARAM, timeout=Manage.CSRF_EXPIRES)
     like = ''
     title = 'New '
     if self.request.get('deck'):
@@ -752,8 +720,7 @@ class Create(handler('/create')):
                         fingerprint=fingerprint(''),
                         uploaded_by=users.get_current_user().nickname())
     shared.put()
-    ref = LongReference(parent=parent(), shared=shared,
-                        shortid=ShortIDCounter.next())
+    ref = LongReference(parent=parent(), shared=shared)
     ref.put()
     self.redirect(Edit.SECURE_URL + '?id=' + str(shared.key().id()))
 

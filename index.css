@@ -1,102 +1,167 @@
-#deck {
-  font-size: small;
-}
-.title {
-  text-align: center;
-  font-weight: bold;
-}
-.deck {
-  margin-top: 0.5em;
-  line-height: 1.5em;
-}
-#decks {
-  margin-bottom: 1em;
-}
-#install,
-#settings {
-  text-align: left;
-}
-#install,
-#card,
-#settings {
+#study, #study-disabled {
   display: none;
 }
-#study,
-#study-disabled {
-  width: 100%;
-  background: #080;
-  margin: 0;
-}
-#study-disabled {
-  background: #ddd;
-  color: #444;
+#study-done {
+  display: none;
+  text-align: center;
+  padding: 8px;
 }
 #good {
-  background: #080;
-  padding-left: 1em;
-  padding-right: 1em;
 }
 #done-hint {
   font-size: small;
   margin-top: 1em;
 }
-#done-hint-ok {
-  background: #008;
-  padding-left: 0.3em;
-  padding-right: 0.3em;
-}
-#flip {
-  width: 100%;
-  margin-left: 0;
-  margin-right: 0;
-}
 #next {
-  background: #800;
-  padding-left: 1em;
-  padding-right: 1em;
-}
-#install {
-  background: #d60;
-  margin-top: 1em;
-  margin-left: auto;
-  margin-right: auto;
-}
-#flip {
-  background: #080;
-}
-#user-manage-help {
-  width: 100%;
-  border: 0;
-  padding: 0;
-  margin: 0;
-  margin-top: 0.5em;
-}
-#user-manage-help td {
-  width: 33%;
-}
-#manage {
-  padding-left: 1em;
-  padding-right: 1em;
-}
-#manage a {
-  width: 100%;
-  background: #008;
-  display: block;
-  text-align: center;
-  margin: 0;
-}
-#help {
-  text-align: right;
 }
 .option {
   white-space: nowrap;
   margin: 0.3em;
 }
-#sync {
-  width: 1em;
-  height: 1em;
-  position: fixed;
-  bottom: 0;
-  right: 0;
-  margin: 0;
+.csv {
+  display: none;
+}
+#study-loading, #study, #study-disabled {
+  text-align: center;
+  padding: 8px;
+  width: 100%;
+}
+#decks .head {
+  display: flex;
+  width: 100%;
+  margin-top: 8px;
+}
+#decks .title {
+  text-align: left;
+  flex-grow: 1;
+  flex-shrink: 0;
+}
+#decks .edit {
+  display: none;
+  margin-left: 8px;
+  flex-shrink: 0;
+  flex-grow: 0;
+  padding: 8px;
+}
+#plugins {
+  margin-top: 8px;
+}
+#plugins button {
+  text-align: left;
+  width: 100%;
+  margin-top: 8px;
+  flex-grow: 1;
+  flex-shrink: 0;
+  padding: 8px 16px;
+}
+button.edit {
+  margin-left: 8px;
+  flex-shrink: 0;
+  padding: 8px 16px;
+}
+#decks .options {
+  display: none;
+  margin-left: 8px;
+}
+#decks .options button {
+  margin: 8px 0 0 8px;
+}
+button.on::before {
+  content: '+ ';
+  font-family: monospace;
+  color: #060;
+  font-weight: bold;
+}
+button.off::before {
+  content: 'O ';
+  font-family: monospace;
+  color: #600;
+}
+#create {
+  margin: 8px 0;
+  display: flex;
+}
+#settings {
+  margin: 8px;
+}
+#create>* {
+  flex-grow: 1;
+}
+#newdeck {
+  margin-left: 8px;
+  margin-right: 8px;
+}
+
+#card {
+  margin: 0 8px;
+  text-align: center;
+  display: none;
+  height: 100%;
+  flex-direction: column;
+}
+#card>* {
+  flex-shrink: 0;
+}
+#type {
+  border: 0;
+  display: none;
+  width: 100%;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  outline: none;
+}
+#front {
+  margin: 8px 0;
+  width: 100%;
+}
+#goodnext {
+  background: #ccd;
+  width: 100%;
+  margin-bottom: 8px;
+  display: flex;
+}
+#good {
+  flex-grow: 1;
+  flex-shrink: 0;
+  color: #0a0;
+}
+#next{
+  flex-grow: 1;
+  flex-shrink: 0;
+  color: #a00;
+  margin-right: 8px;
+}
+#draw {
+  display: none;
+  background: white;
+  width: 100%;
+  flex-grow: 1;
+  flex-shrink: 1;
+  min-height: 200px;
+}
+#postflip {
+  visibility: hidden;
+}
+#progress {
+  position: absolute;
+  top: 0;
+  left: 0;
+  background: #55a;
+  height: 8px;
+}
+#deck {
+  margin-top: 16px;
+}
+#clear {
+  display: none;
+  width: 100%;
+  margin: 8px 0;
+}
+@media only screen and (min-width: 480px){
+  body {
+    /* 16px margin + 1px on either side, inside and out, for rounding errors */
+    min-width: 460px;
+    max-width: 600px;
+  }
 }

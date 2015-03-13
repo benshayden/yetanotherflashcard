@@ -11,11 +11,10 @@
   </div>
   <input type=hidden name=id value={{id}}>
   <input type=hidden id=csrf>
-  <table id=buttons><tr>
-    <td><a href='{{manage_url}}' id=cancel class=button>cancel</a>
-    <td><input type=submit value=save class=button id=save>
-  </table>
-  <div id=user>{{username}}</div>
+  <div id=cancelsave>
+    <button id=cancel>cancel</button>
+    <button type=submit id=save>save</button>
+  </div>
 </form>
 <div id=description>
 {% if like == 'plugin' %}
