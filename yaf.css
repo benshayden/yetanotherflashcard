@@ -5,7 +5,7 @@ html {
   height: 100%;
 }
 body {
-  margin: auto 0;
+  margin: auto;
   height: 100%;
   margin-top: 0;
   margin-bottom:0;
@@ -23,4 +23,11 @@ button {
 }
 button:focus {
   outline: none;
+}
+@media only screen and (min-width: 480px){
+  body {
+    /* 16px margin + 1px on either side, inside and out, for rounding errors */
+    min-width: 460px;
+    max-width: 600px;
+  }
 }

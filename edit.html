@@ -1,14 +1,15 @@
-<!DOCTYPE html>
+<!doctype html>
 <title>Edit {{like}} {{title}}</title>
 <meta name=viewport content='width=device-width,user-scalable=no,initial-scale=1.0,maximum-scale=1.0'>
 <link rel=stylesheet href=yaf.css>
 <link rel=stylesheet href=edit.css>
-<div id=outer>
 <form method=post action=/edit>
-  <input name=title id=title value='{{title}}' size=40><br>
-  <div id=textwrap>
-    <textarea name=text autofocus id=text rows=10 cols=40>{{text}}</textarea>
+  <input name=title id=title value='{{title}}' size=40>
+  <div id=share>
+    <div id=sharelabel>share</div>
+    <input readonly id=sharelink value=http://yetanotherflashcard.appspot.com/add?42>
   </div>
+  <textarea name=text autofocus id=text rows=10 cols=40>{{text}}</textarea>
   <input type=hidden name=id value={{id}}>
   <input type=hidden id=csrf>
   <div id=cancelsave>
@@ -16,24 +17,6 @@
     <button type=submit id=save>save</button>
   </div>
 </form>
-<div id=description>
-{% if like == 'plugin' %}
-Plugins are javascript programs that are run on the main page and that may
-affect the settings and card study screens, but not the manage, add, edit, view,
-or publish pages. They can not add or remove decks or plugins, but they can see
-which decks and plugins you have installed. Plugins can both read and write deck
-options (lessons enabled, directions enabled) and card scores. They can add,
-remove, or modify visual elements like buttons and text. They have read/write
-access to a global object <code>yaf</code>, which can be inspected in the
-browser's developer console/tools.
-{% else %}
-Decks are Comma-Separated-Value files with at least 2 columns. A deck may
-optionally be divided into lessons, which are sets of cards within a deck that
-can be studied as a group. Lessons are divided in the CSV by rows where the
-first column contains the title of the lesson and the second column is empty.
-{% endif %}
-</div>
-</div>
 {% if like == 'plugin' %}
 <link rel=stylesheet href=codemirror.css>
 <script src=codemirror.js></script>

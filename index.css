@@ -158,10 +158,3 @@ button.off::before {
   width: 100%;
   margin: 8px 0;
 }
-@media only screen and (min-width: 480px){
-  body {
-    /* 16px margin + 1px on either side, inside and out, for rounding errors */
-    min-width: 460px;
-    max-width: 600px;
-  }
-}

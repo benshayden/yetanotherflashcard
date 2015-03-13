@@ -24,9 +24,12 @@ if (window.CodeMirror) {
   CodeMirror.defaults.viewportMargin = Infinity;
   CodeMirror.fromTextArea($('text'));
   function resize() {
-    var maxh = innerHeight - (4.5 * parseInt(getComputedStyle(document.body)['margin-top'])) - $('user').offsetHeight - $('title').offsetHeight - $('save').offsetHeight;
+    var maxh = innerHeight - $('cancelsave').offsetHeight - $('share').offsetHeight - $('title').offsetHeight - 44;
     document.querySelector('.CodeMirror-scroll').style.maxHeight = maxh + 'px';
   }
   addEventListener('load', resize);
   addEventListener('resize', resize);
 }
+$('sharelink').addEventListener('click', function(e) {
+  $('sharelink').select();
+});

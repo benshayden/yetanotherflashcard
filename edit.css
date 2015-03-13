@@ -1,32 +1,48 @@
-#title {
-  border: 0;
-  padding: 8px;
+form {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  margin: 0 8px;
 }
-#save {
-  background: #080;
-  display: block;
-}
-#save:disabled {
-  background: #888;
-}
-#outer {
-  display: inline-block;
-}
-#textwrap {
-  text-align: left;
+form>* {
+  flex-grow: 0;
+  flex-shrink: 0;
 }
 #text {
-  margin: auto;
+  flex-grow: 1;
+  flex-shrink: 1;
   display: block;
+  min-height: 10em;
+  margin: 8px 0;
+  padding: 8px;
+  border: 0;
+  outline: none;
 }
-#cancel {
-  background: #d00;
-  display: block;
+.CodeMirror {
+  margin: 8px 0;
 }
-#description {
-  margin-top: 1em;
-  text-align: left;
-  max-width: 50em;
+#title {
+  margin-top: 8px;
+  border: 0;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  outline: none;
+}
+#share {
+  display: flex;
+  margin-top: 8px;
+}
+#sharelabel {
+  flex-grow: 0;
+  flex-shrink: 0;
+  padding: 10px 0;
+  margin-right: 8px;
+}
+#sharelink {
+  flex-grow: 1;
+  flex-shrink: 1;
+  border: 0;
 }
 #cancelsave {
   display: flex;
@@ -36,14 +52,14 @@
   width: 100%;
   margin-bottom: 8px;
 }
-#save {
-  flex-grow: 1;
-  flex-shrink: 0;
-  color: #0a0;
-}
 #cancel {
   flex-grow: 1;
-  flex-shrink: 0;
+  flex-shrink: 1;
   color: #a00;
   margin-right: 8px;
+}
+#save {
+  flex-grow: 1;
+  flex-shrink: 1;
+  color: #0a0;
 }

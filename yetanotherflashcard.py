@@ -82,7 +82,7 @@ def handler(path_re, path=None):
           (users.get_current_user().nickname() != shared.uploaded_by),
           Manage.SECURE_URL + '#e=3', info=('_unpublished',))
     def _csrf(self, redirect, param, field='', timeout=0):
-      self.abortif(not CSRF.verify(self, param, field=field, timeout=timeout),
+      self.abortif(PROD and not CSRF.verify(self, param, field=field, timeout=timeout),
                    redirect, ('_csrf',))
   return Base
 
