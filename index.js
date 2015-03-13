@@ -533,6 +533,8 @@ yaf.Deck.forEach = function(cb) {
 (function() {
 var clear = $('clear');
 var canvas = $('draw');
+var context = canvas.getContext('2d');
+context.lineWidth = 2 * devicePixelRatio;
 function resize_canvas() {
   if (canvas.dirty) return;
   var r = canvas.getBoundingClientRect();
@@ -540,12 +542,11 @@ function resize_canvas() {
   canvas.width = r.width * devicePixelRatio;
 }
 clear.addEventListener('click', function() {
-  canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
+  context.clearRect(0, 0, canvas.width, canvas.height);
   canvas.dirty = false;
   resize_canvas();
 });
 function draw_touch() {
-  var context = canvas.getContext('2d');
   var drawer = {
     isDrawing: false,
     touchstart: function (coors) {
@@ -592,7 +593,6 @@ function draw_touch() {
   canvas.addEventListener('touchend', draw, false);
 }
 function draw_mouse() {
-  var context = canvas.getContext('2d');
   function getPosition(mouseEvent) {
     var x, y;
     if (mouseEvent.pageX != undefined && mouseEvent.pageY != undefined) {
@@ -685,6 +685,14 @@ $('done-hint-ok').addEventListener('click', function() {
 });
 if (yaf.db.get('hok') === '1') {
   $('done-hint').style.display = 'none';
+}
+
+if (false && 'serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/sw.js').then(function(reg) {
+    console.log(reg);
+  }, function(err) {
+    console.log(err);
+  });
 }
 
 applicationCache.addEventListener('updateready', function() {
