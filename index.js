@@ -666,8 +666,9 @@ $('typeform').onsubmit = function() {
   if ($('type').value === yaf.onStudy.card.back) {
     $('good').click();
   } else {
-    $('front').click();
     $('good').style.display = 'none';
+    $('back').style.visibility = 'visible';
+    $('goodnext').style.visibility = 'visible';
   }
   return false;
 };
