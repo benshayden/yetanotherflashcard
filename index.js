@@ -207,7 +207,7 @@ yaf.study = function() {
   $('settings').style.display = 'none';
   $('card').style.display = 'flex';
   $('front').style.display = 'block';
-  $('good').style.display = 'inline';
+  $('good').style.display = 'block';
   $('back').style.visibility = 'hidden';
   $('goodnext').style.visibility = 'hidden';
   var card = yaf.study.due_cards[0][0];
@@ -666,6 +666,7 @@ $('typeform').onsubmit = function() {
   if ($('type').value === yaf.onStudy.card.back) {
     $('good').click();
   } else {
+    yaf.study.bad();
     $('good').style.display = 'none';
     $('back').style.visibility = 'visible';
     $('goodnext').style.visibility = 'visible';
