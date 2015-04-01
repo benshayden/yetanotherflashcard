@@ -35,7 +35,5 @@ $('share').addEventListener('click', function(e) {
   i.focus();
   i.select();
   (i.createTextRange ? i.createTextRange() : document).execCommand('copy');
-});
-$('history').addEventListener('click', function() {
-  console.log('TODO');
+  return false;
 });
