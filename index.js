@@ -7,6 +7,7 @@ var toArray = function(a) { return Array.prototype.slice.apply(a); }
 var MS_PER_DAY = 1000 * 60 * 60 * 24;
 
 function parse_csv(csv, delim) {
+  if (csv.length === 0) return [[]];
   delim = (delim || ',');
   var pattern = new RegExp((
     '(\\' + delim + "|\\r?\\n|\\r|^)" +
@@ -662,11 +663,11 @@ $('next').addEventListener('click', function() {
   yaf.study();
 });
 $('typeform').onsubmit = function() {
-  $('type').disabled = true;
   if ($('type').value === yaf.onStudy.card.back) {
     $('good').click();
   } else {
     yaf.study.bad();
+    $('type').disabled = true;
     $('good').style.display = 'none';
     $('back').style.visibility = 'visible';
     $('goodnext').style.visibility = 'visible';

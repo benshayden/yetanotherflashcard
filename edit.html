@@ -5,15 +5,12 @@
 <link rel=stylesheet href=edit.css>
 <form method=post action=/edit>
   <input name=title id=title value='{{title}}' size=40>
-  <div id=share>
-    <div id=sharelabel>share</div>
-    <input readonly id=sharelink value=http://yetanotherflashcard.appspot.com/add?42>
-  </div>
   <textarea name=text autofocus id=text rows=10 cols=40>{{text}}</textarea>
   <input type=hidden name=id value={{id}}>
   <input type=hidden id=csrf>
-  <div id=cancelsave>
-    <button id=cancel>cancel</button>
+  <div id=controls>
+    <button id=share>share</button>
+    <input readonly id=sharelink value=http://yetanotherflashcard.appspot.com/add?{{id}}>
     <button type=submit id=save>save</button>
   </div>
 </form>

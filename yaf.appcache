@@ -21,9 +21,6 @@ NETWORK:
 /add
 /create
 /edit
-/manage
-/publish
-/remove
 /sync
 /upload
 /yaf.appcache

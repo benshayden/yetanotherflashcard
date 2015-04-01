@@ -1,0 +1,278 @@
+<!doctype html>
+<title>Yet Another Flashcard</title>
+<meta name=viewport content='width=device-width,user-scalable=no,initial-scale=1.0,maximum-scale=1.0'>
+
+<style>
+html {
+  font-family: sans;
+}
+body {
+  margin: auto;
+}
+input, button {
+  font-size: 14pt;
+  padding: 8px;
+}
+button {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  border: 0;
+  background: white;
+  border-radius: 8px;
+}
+button:focus {
+  outline: none;
+}
+button.on::before {
+  content: '+ ';
+  font-family: monospace;
+  color: #060;
+  font-weight: bold;
+}
+button.off::before {
+  content: 'O ';
+  font-family: monospace;
+  color: #600;
+}
+@media only screen and (min-width: 480px){
+  body {
+    /* 16px margin + 1px on either side, inside and out, for rounding errors */
+    min-width: 460px;
+    max-width: 600px;
+  }
+}
+
+#settings, #card, #edit_deck, #edit_plugin {
+  font-size: 14pt;
+  background: #ccd;
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+  margin-top: 16px;
+}
+#card, #edit_deck, #edit_plugin {
+  display: none;
+}
+#deck_settings button {
+  margin-left: 8px;
+  margin-top: 8px;
+}
+#plugin_edit {
+  margin-top: 16px;
+  text-align: left;
+}
+#edit_deck_cancel, #edit_plugin_cancel {
+  flex-grow: 1;
+  border: 0;
+  padding: 8px;
+  border-radius: 8px;
+  background: white;
+}
+#edit_deck_save, #edit_plugin_save {
+  margin-left: 8px;
+  border: 0;
+  padding: 8px;
+  flex-grow: 1;
+  border-radius: 8px;
+  background: white;
+}
+#explain {
+  margin: 8px 0;
+}
+#call {
+  font-size: 16pt;
+  text-align:center;
+  padding-top: 16px;
+  border-radius: 8px;
+  padding: 16px;
+  background: #090;
+  font-weight: bold;
+  margin: 8px;
+}
+#call a {
+  color: white;
+  text-decoration: none;
+}
+#back, #deck_title {
+  text-align: center;
+  margin: 8px 0;
+}
+#nextgood {
+  width: 100%;
+  display: flex;
+}
+#nextgood button {
+  flex-grow: 1;
+}
+#good {
+  margin-left: 8px;
+}
+#progress {
+  background: #55a;
+  height: 8px;
+  width: 0%;
+}
+#done {
+  text-align: center;
+  display: none;
+}
+</style>
+
+Yet Another Flashcard is a programmable web app for learning through spaced
+repetition. You can customize the way it works with just a little javascript.
+Click around this partly functional demo to see how it works.
+
+<div id=settings>
+  <button id=study>study</button>
+  <div id=done>done</div>
+  <div style='display: flex; width: 100%; margin-top: 8px;'>
+    <button style='flex-grow: 1; text-align: left;' id=deck_label>Capitals</button>
+    <button style='flex-shrink: 0; margin-left: 8px;' id=deck_edit>edit</button>
+  </div>
+  <div style='' id=deck_settings>
+    <div style=''>
+      <button class=on>forward</button>
+      <button class=off>type</button>
+    </div>
+    <div style=''>
+      <button class=on>backward</button>
+      <button class=off>type</button>
+    </div>
+    <div><button class=on>Lesson 1</button>
+         <button class=off>Lesson 2</button>
+    </div>
+  </div>
+  <button id=plugin_edit>Demo Plugin</button>
+</div>
+
+<div id=card>
+  <div id=progress></div>
+  <div id=deck_title>Capitals</div>
+  <button id=front></button>
+  <div id=back></div>
+  <div id=nextgood>
+    <button id=next>next</button>
+    <button id=good>good</button>
+  </div>
+</div>
+
+<div id=edit_deck>
+  <input value='Capitals' style='padding: 8px;'>
+  <textarea style='margin: 8px 0; padding: 8px;' rows=6 id=edit_deck_content>Lesson 1
+London, England
+Paris, France
+Lesson 2
+Beijing, China
+Tokyo, Japan</textarea>
+  <div style='width: 100%; display: flex;'>
+    <button id=edit_deck_cancel>cancel</button>
+    <button id=edit_deck_save>save</button>
+  </div>
+</div>
+
+<div id=edit_plugin>
+  <input value='Demo Plugin' style='padding: 8px;'>
+  <textarea style='margin: 8px 0; padding: 8px;' rows=6>console.log('plugin load');
+
+addEventListener(yaf.onDone.type, function() {
+  console.log('done studying for the day');
+});
+
+addEventListener(yaf.onStudy.type, function() {
+  console.log('study', yaf.onStudy.card);
+});
+
+yaf.Deck.forEach(function(deck) {
+  yaf.Lesson.forEach(deck, function(lesson) {
+    lesson.cards.forEach(function(card) {
+      console.log('all cards', card);
+    });
+  });
+});
+
+// yaf.study()
+// yaf.study.good();
+// yaf.study.bad();
+</textarea>
+  <div style='width: 100%; display: flex;'>
+    <button id=edit_plugin_cancel>cancel</button>
+    <button id=edit_plugin_save>save</button>
+  </div>
+</div>
+
+<div id=explain>
+  Click "study" to review the flashcards that are due today. Click a deck option
+  to enable/disable it. Click the plugin title to edit its javascript.
+</div>
+
+<script>
+var cards = 'London,England\nParis,France'.split('\n').map(function(c) { return c.split(',');});
+cards.forEach(function(c) { cards.push([c[1],c[0]])});
+var cardi = 0;
+deck_label.onclick = function() {
+  var on = deck_edit.style.display === 'none';
+  deck_edit.style.display = on ? 'block' : 'none';
+  deck_settings.style.display = on ? 'block' : 'none';
+  explain.innerText = 'Clicking a deck title shows or hides its options.';
+}
+study.onclick = function() {
+  settings.style.display = 'none';
+  card.style.display = 'flex';
+  front.innerText = cards[cardi][0];
+  back.innerText = cards[cardi][1];
+  back.style.visibility = 'hidden';
+  nextgood.style.visibility = 'hidden';
+  explain.innerText = 'Try to remember the other side of the card, then click to see if you remembered correctly.';
+}
+deck_edit.onclick = function() {
+  settings.style.display = 'none';
+  edit_deck.style.display = 'flex';
+  edit_deck_content.focus();
+  explain.innerText = '';
+}
+plugin_edit.onclick = function() {
+  settings.style.display = 'none';
+  edit_plugin.style.display = 'flex';
+  explain.innerText = '';
+}
+edit_deck_cancel.onclick = edit_deck_save.onclick = function() {
+  edit_deck.style.display = 'none';
+  settings.style.display = 'flex';
+  explain.innerText = '';
+}
+edit_plugin_cancel.onclick = edit_plugin_save.onclick = function() {
+  edit_plugin.style.display = 'none';
+  settings.style.display = 'flex';
+  explain.innerText = '';
+}
+front.onclick = function() {
+  back.style.visibility = 'visible';
+  nextgood.style.visibility = 'visible';
+  explain.innerText = (cardi > 0) ? '' : 'If you remembered correctly, click "good" so you won\'t see it again for some number of days.\nIf you had forgotten the card, click "next" to try it again after you\'ve finished the other cards that are due today.';
+}
+next.onclick = good.onclick = function() {
+  explain.innerText = (cardi > 0) ? '' : 'The progress bar at the top indicates how far you are through the cards that are due today.';
+  cardi++;
+  if (cardi >= cards.length) {
+    card.style.display = 'none';
+    settings.style.display = 'flex';
+    study.style.display = 'none';
+    done.style.display = 'block';
+    return;
+  }
+  progress.style.width = (100 * cardi / cards.length) + '%';
+  front.innerText = cards[cardi][0];
+  back.innerText = cards[cardi][1];
+  back.style.visibility = 'hidden';
+  nextgood.style.visibility = 'hidden';
+};
+[].forEach.call(document.querySelectorAll('button'), function(b) {
+  if (b.className === 'on' || b.className === 'off') {
+    b.onclick = function() {
+      b.className = (b.className === 'on') ? 'off' : 'on';
+    }
+  }
+});
+</script>
+
+<p id=call><a href=/>Login with Google to start learning!</a>

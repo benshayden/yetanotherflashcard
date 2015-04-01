@@ -29,22 +29,7 @@ form>* {
   box-sizing: border-box;
   outline: none;
 }
-#share {
-  display: flex;
-  margin-top: 8px;
-}
-#sharelabel {
-  flex-grow: 0;
-  flex-shrink: 0;
-  padding: 10px 0;
-  margin-right: 8px;
-}
-#sharelink {
-  flex-grow: 1;
-  flex-shrink: 1;
-  border: 0;
-}
-#cancelsave {
+#controls {
   display: flex;
   flex-grow: 0;
   flex-shrink: 0;
@@ -52,14 +37,28 @@ form>* {
   width: 100%;
   margin-bottom: 8px;
 }
-#cancel {
+#share {
   flex-grow: 1;
   flex-shrink: 1;
-  color: #a00;
+  margin-right: 8px;
+}
+#sharelink {
+  display: none;
+  flex-grow: 1;
+  flex-shrink: 1;
+  border: 0;
   margin-right: 8px;
 }
 #save {
   flex-grow: 1;
   flex-shrink: 1;
   color: #0a0;
+}
+#history {
+  flex-grow: 1;
+  flex-shrink: 1;
+  margin-right: 8px;
+}
+button[disabled] {
+  background: #bbb;
 }

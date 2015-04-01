@@ -9,14 +9,12 @@ document.cookie.split(';').forEach(function(a){
   csrf.value = a.substr(i+1).trim();
 });
 $('text').focus();
-$('cancel').addEventListener('click', function() {
-  location.href = '/';
-});
-
 function disableSave() {
+  // TODO also disable save if title and text are unchanged
   console.debug($('title').value);
   $('save').disabled = !$('title').value;
 }
+// TODO disable share if text is changed
 $('title').addEventListener('keyup', disableSave);
 $('title').addEventListener('change', disableSave);
 if (window.CodeMirror) {
@@ -24,12 +22,20 @@ if (window.CodeMirror) {
   CodeMirror.defaults.viewportMargin = Infinity;
   CodeMirror.fromTextArea($('text'));
   function resize() {
-    var maxh = innerHeight - $('cancelsave').offsetHeight - $('share').offsetHeight - $('title').offsetHeight - 44;
+    var maxh = innerHeight - $('controls').offsetHeight - $('title').offsetHeight - 44;
     document.querySelector('.CodeMirror-scroll').style.maxHeight = maxh + 'px';
   }
   addEventListener('load', resize);
   addEventListener('resize', resize);
 }
-$('sharelink').addEventListener('click', function(e) {
-  $('sharelink').select();
+$('share').addEventListener('click', function(e) {
+  $('share').style.display = 'none';
+  var i = $('sharelink');
+  i.style.display = 'block';
+  i.focus();
+  i.select();
+  (i.createTextRange ? i.createTextRange() : document).execCommand('copy');
+});
+$('history').addEventListener('click', function() {
+  console.log('TODO');
 });

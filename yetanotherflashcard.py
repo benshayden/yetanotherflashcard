@@ -29,7 +29,7 @@ PROD = not os.environ.get('SERVER_SOFTWARE', '').startswith('Dev')
 # 'self', so plugins must be served on the default version hostname as well,
 # provided that the user has installed them. Plugins can therefore see all
 # CSRF cookies available on the default version hostname (just Sync).
-# 2. Manage, Add, Edit, Remove, Upload, Create, Publish use CSRF cookies that
+# 2. Add, Edit, Upload, Create use CSRF cookies that
 # should not be available to plugins, so they must be on a different domain, that is
 # SECURE_HOST.
 # See the comment in the Text handler class about how it uses the different
@@ -69,18 +69,9 @@ def handler(path_re, path=None):
                    origin + (path or self.PATH), info=('_origin',))
     def _uploaded(self, shared):
       user = users.get_current_user().nickname()
-      self.abortif(not shared, Manage.SECURE_URL + '#e=0', ('not shared',))
-      self.abortif(user != shared.uploaded_by, Manage.SECURE_URL + '#e=2',
+      self.abortif(not shared, Index.URL, ('not shared',))
+      self.abortif(user != shared.uploaded_by, Index.URL,
                    ('uploaded_by=%r != user=%r', shared.uploaded_by, user))
-    def _published(self, shared):
-      self.abortif(not shared, Manage.SECURE_URL + '#e=0')
-      self.abortif(shared.published, Manage.SECURE_URL + '#e=4',
-                   ('published %r', shared.key().id()))
-    def _unpublished(self, shared):
-      self.abortif(not shared, Manage.SECURE_URL + '#e=0', ('not shared',))
-      self.abortif((not shared.published) and
-          (users.get_current_user().nickname() != shared.uploaded_by),
-          Manage.SECURE_URL + '#e=3', info=('_unpublished',))
     def _csrf(self, redirect, param, field='', timeout=0):
       self.abortif(PROD and not CSRF.verify(self, param, field=field, timeout=timeout),
                    redirect, ('_csrf',))
@@ -222,7 +213,6 @@ class LongShared(db.Model):
   uploaded_by = db.StringProperty()
   uploaded_at = db.DateTimeProperty(auto_now_add=True)
   title = db.StringProperty()
-  published = db.BooleanProperty(default=False)
   fingerprint = db.StringProperty()
 
   CSV = 'csv'
@@ -332,7 +322,7 @@ class Index(handler('/')):
     self._user(users.create_login_url(Index.URL))
     self._origin(Index.URL, '/')
     decks, plugins, removed_decks, removed_plugins = LongReference.for_user()
-    self.abortif(not decks, Manage.SECURE_URL, info=('decks',))
+    self.abortif(not decks, Index.URL, info=('decks',))
 
     self.response.headers.add_header('Content-Security-Policy', Index.CSP)
     self.response.headers.add_header('X-Content-Security-Policy', Index.CSP)
@@ -356,7 +346,7 @@ class AppCache(handler('/yaf.appcache')):
     self._origin(Index.URL, '/')
     decks, plugins, removed_decks, removed_plugins = LongReference.for_user()
     # 404 deletes the appcache, not localStorage. The browser must re-fetch
-    # Index, which will redirect to Manage if not decks.
+    # Index.
     self.abortif(not decks, 404)
 
     CSRF.sign(self, Sync.CSRF_PARAM, expires=Sync.CSRF_EXPIRES, path=False)
@@ -380,7 +370,8 @@ class Sync(handler('/sync')):
     sent = json.loads(self.request.body)
     self._csrf(403, Sync.CSRF_PARAM, sent.get('c', ''), Sync.CSRF_EXPIRES)
 
-    del sent['c']
+    if 'c' in sent:
+        del sent['c']
     t = sent['t']
     del sent['t']
     CSRF.sign(self, Sync.CSRF_PARAM, expires=Sync.CSRF_EXPIRES, path=False)
@@ -395,69 +386,11 @@ class Sync(handler('/sync')):
       ShortPair.update(now, k, str(v))
     self.response.out.write(json.dumps(missed))
 
-class Manage(handler('/manage')):
-  CSP = ("script-src 'self'; " +
-         "style-src 'self'; " +
-         "img-src 'self'; " +
-         "media-src 'self'; " +
-         "frame-src 'none'; " +
-         "connect-src 'none'; " +
-         "font-src 'none'; " +
-         "frame-options 'deny'; " +
-         "report-uri " + ReportCSPViolation.PATH)
-  CSRF_PARAM = 'm'
-  CSRF_EXPIRES = 60 * 60
-
-  def get(self):
-    self._user(users.create_login_url(Manage.SECURE_URL))
-    self._origin(SECURE_ORIGIN)
-
-    self.response.headers.add_header('Content-Security-Policy', Manage.CSP)
-    self.response.headers.add_header('X-Content-Security-Policy', Manage.CSP)
-    self.response.headers.add_header('X-Frame-Options', 'DENY')
-    if PROD:
-      self.response.headers.add_header('Strict-Transport-Security', 'max-age=31536000')
-    user = users.get_current_user()
-    CSRF.sign(self, Manage.CSRF_PARAM, expires=Manage.CSRF_EXPIRES, secure=True, path=False)
-    decks, plugins, removed_decks, removed_plugins = LongReference.for_user()
-    # unpublished decks alphabetized by title
-    # unpublished plugins alphabetized by title
-    # published unremoved decks alphabetized by title
-    # published unremoved plugins alphabetized by title
-    # removed decks alphabetized by title
-    # removed plugins alphabetized by title
-    def key(ref): return ref.shared.title + str(ref.shared_id())
-    decks.sort(key=key)
-    plugins.sort(key=key)
-    removed_decks.sort(key=key)
-    removed_plugins.sort(key=key)
-    def render(ref):
-      return dict(id=ref.shared_id(),
-                  title=ref.shared.title,
-                  like=ref.shared.like,
-                  removed=ref.removed,
-                  published=ref.shared.published,
-                  users=ref.shared.count_users(),
-                  uploaded_by=ref.shared.uploaded_by,
-                  uploaded_at=ref.shared.uploaded_at.isoformat(),
-                  added_at=ref.added_at.isoformat())
-    self.response.out.write(JINJA.get_template('manage.html').render(dict(
-      user=user.nickname(),
-      any_enabled_decks=(len(decks) > 0),
-      settings_url=Index.SECURE_URL,
-      share_url=Add.SECURE_URL,
-      view_url=Text.SECURE_URL,
-      edit_url=Edit.SECURE_URL,
-      publish_url=Publish.SECURE_URL,
-      unpublished=[render(ref) for ref in decks + plugins if not ref.shared.published],
-      published=[render(ref) for ref in decks + plugins if ref.shared.published],
-      removed=[render(ref) for ref in removed_decks + removed_plugins])))
-
 class Upload(handler('/upload')):
   def post(self):
-    self._user(users.create_login_url(Manage.SECURE_URL))
-    self._origin(SECURE_ORIGIN, Manage.PATH)
-    self._csrf(Manage.SECURE_URL + '#e=0', Manage.CSRF_PARAM, timeout=Manage.CSRF_EXPIRES)
+    self._user(users.create_login_url(Index.URL))
+    self._origin(SECURE_ORIGIN, Index.PATH)
+    self._csrf(Index.URL, Sync.CSRF_PARAM, timeout=Sync.CSRF_EXPIRES)
 
     for f in parse_files(self.request.body):
       shared = LongShared.get_or_create(f)
@@ -468,26 +401,7 @@ class Upload(handler('/upload')):
       if not ref:
         ref = LongReference(shared=shared, parent=parent())
       ref.put()
-    self.redirect(Manage.SECURE_URL)
-
-class Remove(handler('/remove')):
-  def post(self):
-    self._user(users.create_login_url(Manage.SECURE_URL))
-    self._origin(SECURE_ORIGIN, Manage.PATH)
-    self._csrf(Manage.SECURE_URL + '#e=0', Manage.CSRF_PARAM, timeout=Manage.CSRF_EXPIRES)
-    shared_id = self.request.get('id')
-    shared = None
-    ref = None
-    if shared_id and shared_id.isdigit():
-      shared = LongShared.get_by_id(int(shared_id))
-    if shared:
-      ref = LongReference.all().ancestor(parent()).filter('shared', shared).get()
-    self.abortif(not ref, Manage.SECURE_URL + '#e=1', ('missing %s', shared_id))
-
-    ref.removed = True
-    ref.put()
-    logging.info('success')
-    self.redirect(Manage.SECURE_URL)
+    self.redirect(Index.URL)
 
 class Add(handler('/add')):
   CSRF_PARAM = 'a'
@@ -505,19 +419,17 @@ class Add(handler('/add')):
         like = 'deck'
       elif shared.like == LongShared.JS:
         like = 'plugin'
-    self.abortif(not like, Manage.SECURE_URL + '#e=1')
-    self._unpublished(shared)
+    self.abortif(not like, Index.URL)
     ref = LongReference.all().ancestor(parent()).filter('shared', shared).get()
-    self.abortif(ref and not ref.removed, Manage.SECURE_URL, info=('not removed %s', shared_id))
+    self.abortif(ref and not ref.removed, Index.URL, info=('not removed %s', shared_id))
 
-    self.response.headers.add_header('Content-Security-Policy', Manage.CSP)
-    self.response.headers.add_header('X-Content-Security-Policy', Manage.CSP)
+    self.response.headers.add_header('Content-Security-Policy', Edit.CSP)
+    self.response.headers.add_header('X-Content-Security-Policy', Edit.CSP)
     self.response.headers.add_header('X-Frame-Options', 'DENY')
     if PROD:
       self.response.headers.add_header('Strict-Transport-Security', 'max-age=31536000')
     CSRF.sign(self, Add.CSRF_PARAM + shared_id, expires=Add.CSRF_EXPIRES, secure=True)
     self.response.out.write(JINJA.get_template('add.html').render(dict(
-      manage_url=Manage.SECURE_URL,
       username=users.get_current_user().nickname(),
       id=shared_id,
       text=shared.text,
@@ -534,9 +446,8 @@ class Add(handler('/add')):
     shared = None
     if shared_id and shared_id.isdigit():
       shared = LongShared.get_by_id(int(shared_id))
-    self.abortif(not shared, Manage.SECURE_URL + '#e=1')
-    self._unpublished(shared)
-    self._csrf(Manage.SECURE_URL + '#e=0', Add.CSRF_PARAM + shared_id, timeout=Add.CSRF_EXPIRES)
+    self.abortif(not shared, Index.URL)
+    self._csrf(Index.URL, Add.CSRF_PARAM + shared_id, timeout=Add.CSRF_EXPIRES)
 
     ref = LongReference.all().ancestor(parent()).filter('shared', shared).get()
     if not ref:
@@ -544,7 +455,7 @@ class Add(handler('/add')):
     ref.removed = False
     ref.put()
     logging.info('successful add %s', shared_id)
-    self.redirect(Manage.SECURE_URL)
+    self.redirect(Index.URL)
 
 class Text(handler(r'/text.*', '/text')):
   # Index uses CSP to only allow scripts loaded from
@@ -558,7 +469,6 @@ class Text(handler(r'/text.*', '/text')):
   # will prevent it from running.
 
   def get(self):
-    # TODO serve multiple plugins at once?
     shared_id = self.request.get('id')
     shared = None
     if shared_id and shared_id.isdigit():
@@ -580,54 +490,6 @@ class Text(handler(r'/text.*', '/text')):
     self.response.headers.add_header('Content-Disposition', 'inline')
     self.response.out.write(text)
 
-class Publish(handler('/publish')):
-  CSRF_PARAM = 'p'
-  CSRF_EXPIRES = 60 * 60
-
-  def get(self):
-    self._user(users.create_login_url(Manage.SECURE_URL))
-    self._origin(SECURE_ORIGIN, Manage.PATH)
-    shared_id = self.request.get('id')
-    shared = None
-    like = ''
-    if shared_id and shared_id.isdigit():
-      shared = LongShared.get_by_id(int(shared_id))
-    if shared:
-      if shared.like == LongShared.CSV:
-        like = 'deck'
-      elif shared.like == LongShared.JS:
-        like = 'plugin'
-    self.abortif(not like, Manage.SECURE_URL + '#e=1')
-    self._uploaded(shared)
-
-    self.response.headers.add_header('Content-Security-Policy', Manage.CSP)
-    self.response.headers.add_header('X-Content-Security-Policy', Manage.CSP)
-    self.response.headers.add_header('X-Frame-Options', 'DENY')
-    CSRF.sign(self, Publish.CSRF_PARAM + shared_id, expires=Publish.CSRF_EXPIRES, path=False)
-    self.response.out.write(JINJA.get_template('publish.html').render(dict(
-      manage_url=Manage.SECURE_URL,
-      username=users.get_current_user().nickname(),
-      id=shared_id,
-      text=shared.text,
-      like=like,
-      title=shared.title)))
-
-  def post(self):
-    self._user(users.create_login_url(Manage.SECURE_URL))
-    self._origin(SECURE_ORIGIN, Manage.PATH)
-    shared_id = self.request.get('id')
-    shared = None
-    if shared_id and shared_id.isdigit():
-      shared = LongShared.get_by_id(int(shared_id))
-    self._uploaded(shared)
-    self._csrf(Manage.SECURE_URL + '#e=0', Publish.CSRF_PARAM + shared_id,
-               timeout=Publish.CSRF_EXPIRES)
-
-    shared.published = True
-    shared.put()
-    logging.info('success')
-    self.redirect(Manage.SECURE_URL)
-
 class Edit(handler('/edit')):
   # codemirror requires style-src 'unsafe-eval'
   CSP = ("script-src 'self'; " +
@@ -643,8 +505,8 @@ class Edit(handler('/edit')):
   CSRF_EXPIRES = 60 * 60 * 3
 
   def get(self):
-    self._user(users.create_login_url(Manage.SECURE_URL))
-    self._origin(SECURE_ORIGIN, Manage.PATH)
+    self._user(users.create_login_url(Index.URL))
+    self._origin(SECURE_ORIGIN, Index.PATH)
     shared_id = self.request.get('id')
     shared = None
     ref = None
@@ -658,9 +520,8 @@ class Edit(handler('/edit')):
         like = 'deck'
       elif shared.like == LongShared.JS:
         like = 'plugin'
-    self.abortif(not ref or not like, Manage.SECURE_URL + '#e=1')
+    self.abortif(not ref or not like, Index.URL)
     self._uploaded(shared)
-    self._published(shared)
 
     self.response.headers.add_header('Content-Security-Policy', Edit.CSP)
     self.response.headers.add_header('X-Content-Security-Policy', Edit.CSP)
@@ -669,7 +530,6 @@ class Edit(handler('/edit')):
       self.response.headers.add_header('Strict-Transport-Security', 'max-age=31536000')
     CSRF.sign(self, Edit.CSRF_PARAM + shared_id, expires=Edit.CSRF_EXPIRES, path=False)
     self.response.out.write(JINJA.get_template('edit.html').render(dict(
-      manage_url=Manage.SECURE_URL,
       like=like,
       id=shared_id,
       username=users.get_current_user().nickname(),
@@ -677,8 +537,8 @@ class Edit(handler('/edit')):
       text=shared.text)))
 
   def post(self):
-    self._user(users.create_login_url(Manage.SECURE_URL))
-    self._origin(SECURE_ORIGIN, Manage.PATH)
+    self._user(users.create_login_url(Index.URL))
+    self._origin(SECURE_ORIGIN, Index.PATH)
     shared_id = self.request.get('id')
     text = self.request.get('text')
     title = self.request.get('title')
@@ -688,10 +548,9 @@ class Edit(handler('/edit')):
       shared = LongShared.get_by_id(int(shared_id))
     if shared:
       ref = LongReference.all().ancestor(parent()).filter('shared', shared).get()
-    self.abortif(not ref, Manage.SECURE_URL + '#e=1', ('missing %s', shared_id))
-    self._csrf(Manage.SECURE_URL + '#e=0', Edit.CSRF_PARAM + shared_id, timeout=Edit.CSRF_EXPIRES)
+    self.abortif(not ref, Index.URL, ('missing %s', shared_id))
+    self._csrf(Index.URL, Edit.CSRF_PARAM + shared_id, timeout=Edit.CSRF_EXPIRES)
     self._uploaded(shared)
-    self._published(shared)
 
     shared.title = as_unicode(title)
     shared.text = as_unicode(text)
@@ -701,9 +560,9 @@ class Edit(handler('/edit')):
 
 class Create(handler('/create')):
   def post(self):
-    self._user(users.create_login_url(Manage.SECURE_URL))
-    self._origin(SECURE_ORIGIN, Manage.PATH)
-    self._csrf(Manage.SECURE_URL + '#e=0', Manage.CSRF_PARAM, timeout=Manage.CSRF_EXPIRES)
+    self._user(users.create_login_url(Index.URL))
+    self._origin(SECURE_ORIGIN, Index.PATH)
+    self._csrf(Index.URL, Index.CSRF_PARAM, timeout=Index.CSRF_EXPIRES)
     like = ''
     title = 'New '
     if self.request.get('deck'):
@@ -712,7 +571,7 @@ class Create(handler('/create')):
     elif self.request.get('plugin'):
       like = LongShared.JS
       title += 'Plugin'
-    self.abortif(not like, Manage.SECURE_URL)
+    self.abortif(not like, Index.URL)
 
     shared = LongShared(like=like,
                         title=title,
@@ -725,3 +584,17 @@ class Create(handler('/create')):
     self.redirect(Edit.SECURE_URL + '?id=' + str(shared.key().id()))
 
 app = webapp2.WSGIApplication(handlers)
+
+# TODO
+
+# balance piles
+
+# review missed
+
+# short ids to minimize sync db size
+# long ids = hashes of content
+# short ids point to long ids, pointer changes when edit
+# share = /add?longid
+# remove = edit, delete all text
+
+# structured, not flat, db

@@ -19,7 +19,7 @@ button {
   -moz-appearance: none;
   border: 0;
   background: white;
-  border-radius: 6px;
+  border-radius: 8px;
 }
 button:focus {
   outline: none;

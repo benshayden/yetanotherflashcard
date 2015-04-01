@@ -25,7 +25,7 @@ handlers:
   static_files: apple-touch-icon-144x144-precomposed.png
   upload: apple-touch-icon-144x144-precomposed.png
 
-- url: /(|yaf.appcache|create|upload|add|edit|manage|remove)
+- url: /(|yaf.appcache|create|upload|add|edit)
   secure: always
   script: yetanotherflashcard.app
   login: required
