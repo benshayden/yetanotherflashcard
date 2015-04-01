@@ -70,9 +70,6 @@ yaf.TODAY = Math.floor((new Date().getTime() - yaf.EPOCH) / MS_PER_DAY);
 yaf.good = function(card) { return card.score + 1; };
 yaf.bad = function(card) { return 0; }
 
-// Return the card's new due date as a number of days from now.
-yaf.schedule = function(card) { return card.score; }
-
 yaf.db = {};
 (function() {
 var _t = ('t' in localStorage) ? parseInt(localStorage.t) : 0;
@@ -258,6 +255,24 @@ yaf.study = function() {
 
 })();
 
+// Return the card's new due date.
+yaf.schedule = function(card) {
+  var nominal_due_date = yaf.TODAY + card.score;
+  var due_date = nominal_due_date;
+  var epsilon = parseInt(card.score / 4);
+  for (var delta = -epsilon; delta <= epsilon; ++delta) {
+    if (delta === 0) continue;
+    if (!((nominal_due_date + delta) in yaf.study.due_date_counts)) {
+      yaf.study.due_date_counts[nominal_due_date + delta] = 0;
+    }
+    if (yaf.study.due_date_counts[nominal_due_date + delta] < yaf.study.due_date_counts[due_date]) {
+      due_date = nominal_due_date + delta;
+    }
+  }
+  yaf.study.due_date_counts[due_date] += 1;
+  return due_date;
+};
+
 yaf.study.due_cards = [];  // array of arrays of cards
 yaf.study.enabled_cards = [];  // array of cards
 
@@ -269,6 +284,7 @@ function show_study() {
 
 // Call whenever any card.is_due() might have changed.
 yaf.study.update = function() {
+  yaf.study.due_date_counts = {};
   yaf.study.due_cards.splice(0, yaf.study.due_cards.length);
   yaf.study.enabled_cards.splice(0, yaf.study.enabled_cards.length);
   yaf.Deck.forEach(function(deck) {
@@ -280,6 +296,11 @@ yaf.study.update = function() {
           deck_enabled_cards.push(card);
           if (card.is_due()) {
             deck_due_cards.push(card);
+          }
+          if (card.due in yaf.study.due_date_counts) {
+            yaf.study.due_date_counts[card.due] += 1;
+          } else {
+            yaf.study.due_date_counts[card.due] = 1;
           }
         }
       });
@@ -422,7 +443,7 @@ yaf.Card.prototype.merge = function(s) {
 yaf.Card.prototype.mark = function(good) {
   var card = this;
   card.score = (good ? yaf.good : yaf.bad)(card);
-  card.due = yaf.TODAY + yaf.schedule(card);
+  card.due = yaf.schedule(card);
   yaf.db.set(card.id, card.score + ',' + card.due);
 };
 
